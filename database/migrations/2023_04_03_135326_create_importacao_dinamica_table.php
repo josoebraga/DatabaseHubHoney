@@ -15,14 +15,13 @@ return new class extends Migration
     {
         Schema::create('importacao_dinamica', function (Blueprint $table) {
             $table->id();
-            $table->string('coluna_1')->nullable();
-            $table->string('coluna_2')->nullable();
-            $table->string('coluna_3')->nullable();
-            $table->string('coluna_4')->nullable();
-            $table->string('coluna_5')->nullable();
-            $table->string('coluna_6')->nullable();
-            $table->string('coluna_7')->nullable();
-            $table->string('coluna_8')->nullable();
+            $table->string('ORIGEM')->nullable();
+            $table->string('TELEFONE')->nullable();
+            $table->string('DATA_BLOQUEIO')->nullable();
+            $table->string('DATA_ARQUIVO')->nullable();
+            $table->string('EMPRESA_BLOQUEADA')->nullable();
+            $table->string('ORIGEM_DO_PEDIDO')->nullable();
+            $table->string('DATA_PROCESSAMENTO')->nullable();
             $table->timestamps();
         });
     }
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teste');
+        Schema::dropIfExists('importacao_dinamica');
     }
 };
