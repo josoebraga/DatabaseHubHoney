@@ -73,6 +73,8 @@ And Laravel: https://laravel.com/docs/9.x/installation
 6. Run `php artisan migrate --seed` to create the database tables and seed the roles and users tables
 7. Run `php artisan storage:link` to create the storage symlink (if you are using **Vagrant** with **Homestead** for development, remember to ssh into your virtual machine and run the command from there).
 
+php artisan migrate:refresh --seed
+
 ## Usage
 Register a user or login with default user **admin@softui.com** and password **secret** from your database and start testing (make sure to run the migrations and seeders for these credentials to be available).
 
