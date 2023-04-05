@@ -19,10 +19,10 @@
                 <div class="col-auto my-auto">
                     <div class="h-100">
                         <h5 class="mb-1">
-                            {{ __('Alec Thompson') }}
+                            {{ $user->name }}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
-                            {{ __(' CEO / Co-Founder') }}
+                            {{ $this->userTypeSee->type }}
                         </p>
                     </div>
                 </div>
@@ -122,7 +122,6 @@
             </div>
         </div>
     </div>
-
     <div class="container-fluid py-4">
         <div class="card">
             <div class="card-header pb-0 px-3">
@@ -196,6 +195,23 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="user.user_type_id" class="form-control-label">{{ __('Type') }}</label>
+                                <div class="@error('user.phone')border border-danger rounded-3 @enderror">
+                                    <select class="form-control form-control-alternative" name="choices-button" id="choices-button">
+                                        <option>(Escolha Uma Opção)</option>
+                                        @forelse ($usersType as $userType)
+                                        <option wire:model="user.user_type_id" {{$user->user_type_id == $userType->id ? 'selected' : ''}}>{{$userType->type}}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                                @error('user.phone') <div class="text-danger">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+                    </div>{{$user->user_type_id}}
                     <div class="form-group">
                         <label for="about">{{ 'About Me' }}</label>
                         <div class="@error('user.about')border border-danger rounded-3 @enderror">

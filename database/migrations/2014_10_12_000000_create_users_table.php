@@ -22,7 +22,11 @@ return new class extends Migration
             $table->string('about')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('user_type_id')->nullable();
             $table->rememberToken();
+
+            $table->foreign('user_type_id')->references('id')->on('users_type');
+
             $table->timestamps();
         });
     }
