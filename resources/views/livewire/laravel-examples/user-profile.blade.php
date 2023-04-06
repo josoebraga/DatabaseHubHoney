@@ -141,10 +141,10 @@
 
                 @if ($showSuccesNotification)
                     <div wire:model="showSuccesNotification"
-                        class="mt-3 alert alert-primary alert-dismissible fade show" role="alert">
+                        class="mt-3 alert alert-success alert-dismissible fade show" role="alert">
                         <span class="alert-icon text-white"><i class="ni ni-like-2"></i></span>
                         <span
-                            class="alert-text text-white">{{ __('Your profile information have been successfuly saved!') }}</span>
+                            class="alert-text text-white">{{ __('O Usuário foi atualizado com sucesso!') }}</span>
                         <button wire:click="$set('showSuccesNotification', false)" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         </button>
                     </div>
@@ -199,16 +199,16 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="user.user_type_id" class="form-control-label">{{ __('Type') }}</label>
-                                <div class="@error('user.phone')border border-danger rounded-3 @enderror">
-                                    <select class="form-control form-control-alternative" name="choices-button" id="choices-button">
+                                <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
+                                    <select wire:model="user.user_type_id" class="form-control form-control-alternative" name="choices-button" id="choices-button">
                                         <option>(Escolha Uma Opção)</option>
                                         @forelse ($usersType as $userType)
-                                        <option wire:model="user.user_type_id" {{$user->user_type_id == $userType->id ? 'selected' : ''}}>{{$userType->type}}</option>
+                                        <option value="{{$userType->id}}">{{$userType->type}}</option>
                                         @empty
                                         @endforelse
                                     </select>
                                 </div>
-                                @error('user.phone') <div class="text-danger">{{ $message }}</div> @enderror
+                                @error('user.user_type_id') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
                         </div>
                     </div>{{$user->user_type_id}}
@@ -220,9 +220,18 @@
                         </div>
                         @error('user.about') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
+                    @if(Auth::user()->user_type_id == 1)
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
                     </div>
+                    @else
+                    <div wire:model="showSuccesNotification" class="mt-3 alert alert-primary alert-dismissible fade show" role="alert">
+                        <span class="alert-icon text-white"><i class="fa fa-exclamation-triangle"></i></span>
+                        <span class="alert-text text-white">Seu usuário não tem permissão para editar esta página!</span>
+                        <button wire:click="$set('showSuccesNotification', false)" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        </button>
+                    </div>
+                    @endif
                 </form>
 
             </div>

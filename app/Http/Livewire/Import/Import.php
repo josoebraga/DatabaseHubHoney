@@ -52,7 +52,13 @@ class Import extends Component
             'teste',
             'modificacoes',
             'migrations',
-            'users'
+            'users',
+            'permissions',
+            'model_has_permissions',
+            'model_has_roles',
+            'roles',
+            'role_has_permissions',
+            'users_type'
             )
         ");
     }

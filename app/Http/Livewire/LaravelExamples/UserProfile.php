@@ -10,9 +10,11 @@ use Livewire\Component;
 class UserProfile extends Component
 {
     #public User $user;
+    #https://demos.creative-tim.com/argon-design-system/docs/foundation/icons.html
     public $user;
     public $usersType;
     public $userTypeSee;
+    public $usertypeId;
     public $showSuccesNotification  = false;
 
     public $showDemoNotification = false;
@@ -22,7 +24,8 @@ class UserProfile extends Component
         'user.email' => 'email:rfc,dns',
         'user.phone' => 'max:10',
         'user.about' => 'max:200',
-        'user.location' => 'min:3'
+        'user.location' => 'min:3',
+        'user.user_type_id' => 'required|numeric|min:1'
     ];
 
     public function mount() {
