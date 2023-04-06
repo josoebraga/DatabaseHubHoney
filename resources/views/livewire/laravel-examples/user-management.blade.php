@@ -7,7 +7,7 @@
             to see the PRO
             product!</span>
     </div>
-
+    {{csrf_field()}}
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
@@ -100,15 +100,16 @@
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">05/05/20</span>
                                     </td>
+
                                     <td class="text-center">
-                                        <a href="#" class="mx-3" data-bs-toggle="tooltip"
-                                            data-bs-original-title="Edit user">
+                                        <a href="/laravel-user-profile/2" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="laravel-user-management">
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
                                         <span>
                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                         </span>
                                     </td>
+
                                 </tr>
                                 <tr>
                                     <td class="ps-4">

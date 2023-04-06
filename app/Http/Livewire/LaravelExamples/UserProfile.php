@@ -4,6 +4,7 @@ namespace App\Http\Livewire\LaravelExamples;
 use App\Models\User;
 use App\Models\UsersTypeModel;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Request;
 
 use Livewire\Component;
 
@@ -28,8 +29,8 @@ class UserProfile extends Component
         'user.user_type_id' => 'required|numeric|min:1'
     ];
 
-    public function mount() {
-        $this->user = User::find(1);
+    public function mount(Request $request) {
+        $this->user = User::find($request->id);
         $this->usersType = UsersTypeModel::all();
         $this->userTypeSee = UsersTypeModel::find($this->user->user_type_id);
 
