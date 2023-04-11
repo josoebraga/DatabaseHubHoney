@@ -42,7 +42,7 @@
                             <tbody>
                                 @forelse ($users as $key => $user)
 
-                                <tr>
+                                <tr @if($user->status == false) class="table-danger" @endif>
                                     <td class="ps-4">
                                         <p class="text-xs font-weight-bold mb-0">{{$user->id}}</p>
                                     </td>
@@ -69,7 +69,15 @@
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
                                         <span>
-                                            <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                                            @if(Auth::user()->user_type_id == 1)
+                                                @if($user->status == true)
+                                                    <i class="cursor-pointer fas fa-toggle-on text-success" wire:click.prevent='updateUserStatus({{$user->id}}, 1)'></i>
+                                                @else
+                                                    <i class="cursor-pointer fas fa-toggle-off text-danger" wire:click.prevent='updateUserStatus({{$user->id}}, 2)'></i>
+                                                @endif
+                                            @else
+                                                <i class="cursor-pointer fas fa-toggle-off text-muted"></i>
+                                            @endif
                                         </span>
                                     </td>
 

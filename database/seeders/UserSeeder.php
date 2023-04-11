@@ -21,7 +21,6 @@ class UserSeeder extends Seeder
     public function run()
     {
 
-
         DB::table('users_type')->insert([
             'type' => 'Administrador',
             'status' => true,
@@ -41,7 +40,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('secret'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'user_type_id' => 1
+            'user_type_id' => 1,
+            'status' => true,
         ]);
 
         DB::table('users')->insert([
@@ -51,6 +51,7 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'user_type_id' => 2,
+            'status' => true,
         ]);
         DB::table('users')->insert([
             'name' => Str::random(10),
@@ -59,6 +60,7 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'user_type_id' => 3,
+            'status' => true,
         ]);
     }
 }
