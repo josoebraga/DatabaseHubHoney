@@ -33,7 +33,6 @@ class UserProfile extends Component
         $this->user = User::find($request->id);
         $this->usersType = UsersTypeModel::all();
         $this->userTypeSee = UsersTypeModel::find($this->user->user_type_id);
-
     }
 
     public function save() {
