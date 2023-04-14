@@ -229,6 +229,8 @@ class Import extends Component
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
                 $insert = str_replace('(, ', '(', $insert);
                 DB::insert($insert);
+                # Aqui precisa registrar que o registo chegou
+                #DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
             } else if($acao == 'update') {
 
                 $set = 'set '.substr($set, 2, strlen($set)).', updated_at = NOW()';
