@@ -231,6 +231,41 @@ class Import extends Component
                 DB::insert($insert);
                 # Aqui precisa registrar que o registo chegou
                 #DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+
+                $colunasName = substr($colunasName, 3);
+                $values = substr($values, 3);
+                $json = array();
+                $array1 = [$colunasName];
+                $array2 = [$values];
+                $parts1 = explode(",", implode(",", $array1));
+                $parts2 = explode(",", implode(",", $array2));
+                $array = [];
+                foreach($parts1 as $key => $passada) {
+                    array_push($array, [$passada => $parts2[$key]]);
+                }
+
+                array_push($json,
+                [
+                    'old'=>[
+                        $array
+                    ],
+                    'new'=>[
+                        $array
+                    ]
+                ]
+                );
+
+                $json = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $json = str::replace('[[', '[', $json);
+                $json = str::replace(']]', ']', $json);
+                $json = str::replace('[{', '{', $json);
+                $json = str::replace('}]', '}', $json);
+
+                dd("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+
+                DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+
+
             } else if($acao == 'update') {
 
                 $set = 'set '.substr($set, 2, strlen($set)).', updated_at = NOW()';
