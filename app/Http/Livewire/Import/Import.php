@@ -241,6 +241,7 @@ class Import extends Component
                 $parts2 = explode(",", implode(",", $array2));
                 $array = [];
                 foreach($parts1 as $key => $passada) {
+                    $parts2[$key] = str::replace('\'', '', $parts2[$key]);
                     array_push($array, [$passada => $parts2[$key]]);
                 }
 
@@ -260,10 +261,15 @@ class Import extends Component
                 $json = str::replace(']]', ']', $json);
                 $json = str::replace('[{', '{', $json);
                 $json = str::replace('}]', '}', $json);
+                $json = str::replace('\"', '"', $json);
+                $json = str::replace('" "', '"', $json);
+                $json = str::replace('" ', '"', $json);
 
-                dd("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+                #dd($json);
 
-                DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+                $insertLog = "INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", \"created_at\", \"updated_at\") VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());";
+                $insertLog = str::replace('""', '"', $insertLog);
+                DB::insert($insertLog);
 
 
             } else if($acao == 'update') {
