@@ -24,12 +24,12 @@
         @else
             @include('layouts.navbars.auth.sidebar')
             @include('layouts.navbars.auth.nav')
-            @include('components.plugins.fixed-plugin')
+            {{-- @include('components.plugins.fixed-plugin') --}}
             {{ $slot }}
             <main>
                 <div class="container-fluid">
                     <div class="row">
-                        @include('layouts.footers.auth.footer')
+                        {{-- @include('layouts.footers.auth.footer') --}}
                     </div>
                 </div>
             </main>
@@ -43,7 +43,7 @@
             @include('layouts.navbars.guest.login')
             {{ $slot }}
             <div class="mt-5">
-                @include('layouts.footers.guest.with-socials')
+            {{-- @include('layouts.footers.guest.with-socials') --}}
             </div>
 
             {{-- If the user is on the sign up page --}}

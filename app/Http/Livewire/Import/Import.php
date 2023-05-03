@@ -41,7 +41,7 @@ class Import extends Component
         return DB::select("
             select table_name
             from information_schema.tables
-            where table_catalog = 'Honey' and
+            where table_catalog = 'honey' and
             table_schema = 'public' and
             table_type = 'BASE TABLE' and
             table_name not in (
