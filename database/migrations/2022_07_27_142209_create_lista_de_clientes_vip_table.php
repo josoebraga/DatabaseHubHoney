@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('lista_de_clientes_vip', function (Blueprint $table) {
             $table->id();
             $table->string('NOME')->nullable();
-            $table->string('CPF')->nullable();
+            $table->string('CPF_CNPJ')->nullable();
             $table->string('TELEFONE')->nullable();
 
             $table->string('ENDERECO')->nullable();
