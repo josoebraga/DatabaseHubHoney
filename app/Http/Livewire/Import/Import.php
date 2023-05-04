@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
+# https://stackoverflow.com/questions/46141652/running-laravel-queuework-on-a-shared-hosting
+# https://talltips.novate.co.uk/laravel/using-queues-on-shared-hosting-with-laravel
+
 class Import extends Component
 {
     use WithFileUploads;
