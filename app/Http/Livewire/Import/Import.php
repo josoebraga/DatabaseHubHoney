@@ -79,6 +79,99 @@ class Import extends Component
         ");
     }
 
+    public function validarCpfCnpj($tipo, $cpf, $cnpj)
+    {
+        if($tipo == 'cpf') {
+
+            // Verificar se o CPF possui 11 dígitos
+            if (strlen($cpf) != 11) {
+                return "inválido";
+            }
+
+            // Verificar se todos os dígitos são iguais
+            if (preg_match('/(\d)\1{10}/', $cpf)) {
+                return "inválido";
+            }
+
+            // Verificar se o CPF é válido
+            $digito1 = 0;
+            $digito2 = 0;
+
+            for ($i = 0, $j = 10; $i < 9; $i++, $j--) {
+                $digito1 += $cpf[$i] * $j;
+            }
+
+            $resto = $digito1 % 11;
+            $digito1 = ($resto < 2) ? 0 : (11 - $resto);
+
+            for ($i = 0, $j = 11; $i < 10; $i++, $j--) {
+                $digito2 += $cpf[$i] * $j;
+            }
+
+            $resto = $digito2 % 11;
+            $digito2 = ($resto < 2) ? 0 : (11 - $resto);
+
+            if (($cpf[9] != $digito1) || ($cpf[10] != $digito2)) {
+                return "inválido";
+            } else {
+                return "válido";
+            }
+
+        } else if($tipo == 'cnpj') {
+
+            // Verificar se o CNPJ possui 14 dígitos
+            if (strlen($cnpj) != 14) {
+                return "inválido";
+            }
+
+            // Verificar se todos os dígitos são iguais
+            if (preg_match('/(\d)\1{13}/', $cnpj)) {
+                return "inválido";
+            }
+
+            // Verificar se o CNPJ é válido
+            $soma1 = 0;
+            $soma2 = 0;
+            $peso = 5;
+
+            for ($i = 0; $i < 12; $i++) {
+                $soma1 += $cnpj[$i] * $peso;
+
+                if ($peso == 2) {
+                    $peso = 9;
+                } else {
+                    $peso--;
+                }
+            }
+
+            $resto = $soma1 % 11;
+            $digito1 = ($resto < 2) ? 0 : (11 - $resto);
+
+            $peso = 6;
+
+            for ($i = 0; $i < 13; $i++) {
+                $soma2 += $cnpj[$i] * $peso;
+
+                if ($peso == 2) {
+                    $peso = 9;
+                } else {
+                    $peso--;
+                }
+            }
+
+            $resto = $soma2 % 11;
+            $digito2 = ($resto < 2) ? 0 : (11 - $resto);
+
+            if (($cnpj[12] != $digito1) || ($cnpj[13] != $digito2)) {
+                return "inválido";
+            } else {
+                return "válido";
+            }
+
+
+        }
+
+    }
     public function save()
     {
 
@@ -185,6 +278,7 @@ class Import extends Component
             $json = array();
             $colunasName = '';
             $values = '';
+            $retornos = [];
             $acao = '';
             $set = '';
             #$arrayCompara = [];
@@ -193,12 +287,32 @@ class Import extends Component
 
                 foreach($final as $key => $f) {
 
-                $colunasTemp = $key;
-                $colunasName = $colunasName.', '."\"$colunasTemp\"";
+                $colunasTemp = trim($key);
+                $valueTemp = trim($f);
+                $retornoTemp = '';
 
-                $valueTemp = $f;
+                #dd(strtolower($colunasTemp));
+                if(strpos(strtolower('_'.$colunasTemp), strtolower('CPF')) > 0 || strpos(strtolower('_'.$colunasTemp), strtolower('CNPJ')) > 0) { # Str Contains
+                    $valueTemp = preg_replace('/[^0-9]/', '', $valueTemp);
+                    $tipo = 'cpf';
+                    if(strlen($valueTemp) > 11) {
+                        $tipo = 'cnpj';
+                    }
+                    $retornoTemp = $this->validarCpfCnpj($tipo, $valueTemp, $valueTemp);
+                    array_push($retornos, [$colunasTemp => $retornoTemp]);
+                } else if(strpos(strtolower('_'.$colunasTemp), strtolower('FONE')) > 0) {
+                    #dd(strtolower($colunasTemp));
+                    #dd(strpos($colunasTemp, 'FONE'));
+                } else if(strpos(strtolower('_'.$colunasTemp), strtolower('EMAIL')) > 0) {
+                    #dd(strpos($colunasTemp, 'FONE'));
+                } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
+                    #dd(strpos($colunasTemp, 'CEP'));
+                }
+
+                $colunasName = $colunasName.', '."\"$colunasTemp\"";
                 $values = $values.', '."'$valueTemp'";
 
+                #dd($colunasTemp, $valueTemp);
                     # if coluna_8 existe na $tabelaSelecionada: update else insert
                     $colunasSelect = substr($colunasName, 2, strlen($colunasName));
                     if( $colunasTemp == $colunaBaseComparacaoUpdate) {
@@ -243,6 +357,7 @@ class Import extends Component
                 $parts1 = explode(",", implode(",", $array1));
                 $parts2 = explode(",", implode(",", $array2));
                 $array = [];
+                $retorno = [];
                 foreach($parts1 as $key => $passada) {
                     $parts2[$key] = str::replace('\'', '', $parts2[$key]);
                     array_push($array, [$passada => $parts2[$key]]);
@@ -255,6 +370,9 @@ class Import extends Component
                     ],
                     'new'=>[
                         $array
+                    ],
+                    'invalidos' => [
+                        $retornos
                     ]
                 ]
                 );

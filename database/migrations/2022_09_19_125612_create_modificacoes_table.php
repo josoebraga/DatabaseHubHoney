@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('modificacoes', function (Blueprint $table) {
             $table->id();
             $table->string('NOME_TABELA')->nullable();
-            $table->string('LOG')->nullable();
+            $table->text('LOG')->nullable();
             $table->integer('USER_ID')->nullable();
             $table->timestamps();
         });
