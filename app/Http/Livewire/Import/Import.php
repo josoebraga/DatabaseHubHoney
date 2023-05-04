@@ -79,6 +79,17 @@ class Import extends Component
         ");
     }
 
+    ####################################################################
+
+    public function validarTelefone($telefone)
+    {
+        // Verificar se o telefone possui 10 ou 11 dígitos
+        if (!preg_match('/^(\d{10}|\d{11})$/', $telefone)) {
+            return "inválido";
+        } else {
+            return "válido";
+        }
+    }
     public function validarCpfCnpj($tipo, $cpf, $cnpj)
     {
         if($tipo == 'cpf') {
@@ -272,6 +283,34 @@ class Import extends Component
         # Monta o insert dinamicamente
 
         $i = 1;
+
+        #dd($arrayInsertFinal);
+
+        # Trocar a posição da coluna $colunaBaseComparacaoUpdate para o [0]
+
+        /*foreach($arrayInsertFinal as $finais) {
+
+            unset($dadosAntigos);
+            $json = array();
+            $colunasName = '';
+            $values = '';
+            $retornos = [];
+            $acao = '';
+            $set = '';
+            #$arrayCompara = [];
+
+            foreach($finais as $key => $final) {
+
+                    foreach($final as $key => $f) {
+                        if(trim($key) == trim($colunaBaseComparacaoUpdate)) {
+                            dd(trim($key));
+                        }
+                    }
+
+            }
+        }*/
+
+
         foreach($arrayInsertFinal as $finais) {
 
             unset($dadosAntigos);
@@ -293,18 +332,26 @@ class Import extends Component
 
                 #dd(strtolower($colunasTemp));
                 if(strpos(strtolower('_'.$colunasTemp), strtolower('CPF')) > 0 || strpos(strtolower('_'.$colunasTemp), strtolower('CNPJ')) > 0) { # Str Contains
-                    $valueTemp = preg_replace('/[^0-9]/', '', $valueTemp);
+                    $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
                     $tipo = 'cpf';
                     if(strlen($valueTemp) > 11) {
                         $tipo = 'cnpj';
                     }
                     $retornoTemp = $this->validarCpfCnpj($tipo, $valueTemp, $valueTemp);
-                    array_push($retornos, [$colunasTemp => $retornoTemp]);
+                    if($retornoTemp == 'inválido') {
+                        array_push($retornos, [$colunasTemp => $retornoTemp]);
+                    }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('FONE')) > 0) {
                     #dd(strtolower($colunasTemp));
                     #dd(strpos($colunasTemp, 'FONE'));
+                    // Remover espaços, parênteses e hífens do telefone
+                    $valueTemp = preg_replace('/[\s()+-]/', '', trim($valueTemp));
+                    $retornoTemp = $this->validarTelefone($valueTemp);
+                    if($retornoTemp == 'inválido') {
+                        array_push($retornos, [$colunasTemp => $retornoTemp]);
+                    }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('EMAIL')) > 0) {
-                    #dd(strpos($colunasTemp, 'FONE'));
+                    #dd(strpos($colunasTemp, 'ENAIL'));
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
                     #dd(strpos($colunasTemp, 'CEP'));
                 }
@@ -408,6 +455,10 @@ class Import extends Component
 
             # Atualiza a quantidade de linhas importadas no monitoramento
             # No futuro mostrar quantas foram atualizadas e quantos registros são novos
+
+            DB::update("update teste set coluna_4 = $i where id = $id");
+            $i++;
+
             }
 
             try {
@@ -423,6 +474,9 @@ class Import extends Component
                     ],
                     'new'=>[
                         $dadosNovos
+                    ],
+                    'invalidos' => [
+                        $retornos
                     ]
                 ]
             );
@@ -440,14 +494,21 @@ class Import extends Component
         } catch (Exception $e) {}
 
 
-        DB::update("update teste set coluna_4 = $i where id = $id");
-        $i++;
-    #$qsCompara = array_unique($qsCompara);
+        #$qsCompara = array_unique($qsCompara);
         #dd($arrayCompara);
 
         #foreach($dadosNovos as $old) {
         #    dd($old);
         #}
+
+        try {
+            DB::statement("DROP MATERIALIZED VIEW public.$tabelaSelecionada");
+        } catch (Exception $e) {
+        }
+        try {
+            DB::statement("CREATE MATERIALIZED VIEW public.view_$tabelaSelecionada AS SELECT * FROM public.$tabelaSelecionada;");
+        } catch (Exception $e) {
+        }
 
 
         dd('Ok');

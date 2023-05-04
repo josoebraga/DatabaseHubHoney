@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,6 +14,7 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('lista_de_clientes_vip');
         Schema::create('lista_de_clientes_vip', function (Blueprint $table) {
             $table->id();
             $table->string('NOME')->nullable();
@@ -39,6 +41,16 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lista_de_clientes_vip');
+
+        try {
+            DB::statement('DROP MATERIALIZED VIEW view_lista_de_clientes_vip');
+        } catch (Exception $e) {
+        }
+        try {
+            Schema::dropIfExists('lista_de_clientes_vip');
+        } catch (Exception $e) {
+            #sleep(5);
+            #Schema::dropIfExists('lista_de_clientes_vip');
+        }
     }
 };
