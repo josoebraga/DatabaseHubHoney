@@ -18,6 +18,16 @@ return new class extends Migration
             $table->string('NOME')->nullable();
             $table->string('CPF')->nullable();
             $table->string('TELEFONE')->nullable();
+
+            $table->string('ENDERECO')->nullable();
+            $table->string('NUMERO')->nullable();
+            $table->string('COMPLEMENTO')->nullable();
+            $table->string('CIDADE')->nullable();
+            $table->string('ESTADO')->nullable();
+            $table->string('CEP')->nullable();
+
+            $table->string('EMAIL')->nullable();
+
             $table->timestamps();
         });
     }
