@@ -288,28 +288,34 @@ class Import extends Component
 
         # Trocar a posição da coluna $colunaBaseComparacaoUpdate para o [0]
 
-        /*foreach($arrayInsertFinal as $finais) {
+        $arrayTempTroca = $arrayInsertFinal;
+        $chavePrincipal = 0;
 
-            unset($dadosAntigos);
-            $json = array();
-            $colunasName = '';
-            $values = '';
-            $retornos = [];
-            $acao = '';
-            $set = '';
-            #$arrayCompara = [];
-
-            foreach($finais as $key => $final) {
-
-                    foreach($final as $key => $f) {
-                        if(trim($key) == trim($colunaBaseComparacaoUpdate)) {
-                            dd(trim($key));
+        foreach($arrayInsertFinal as $key => $finais) {
+            foreach($finais as $k => $final) {
+                    foreach($final as $j => $f) {
+                        if(trim($j) == trim($colunaBaseComparacaoUpdate) && $key > 0) {
+                            $chavePrincipal = $k;
                         }
                     }
-
             }
-        }*/
+        }
 
+        #dd($chave);
+        #dd($arrayTempTroca);
+        $i = 0;
+        while($i <= count($arrayTempTroca)-1) {
+            if($arrayTempTroca[$i][$chavePrincipal] > 0) {
+                $temp = $arrayTempTroca[$i][0];
+                $arrayTempTroca[$i][0] = $arrayTempTroca[$i][$chavePrincipal];
+                $arrayTempTroca[$i][$chavePrincipal] = $temp;
+            }
+            $i++;
+        }
+
+        unset($arrayInsertFinal);
+        $arrayInsertFinal = $arrayTempTroca;
+        unset($arrayTempTroca);
 
         foreach($arrayInsertFinal as $finais) {
 
@@ -320,6 +326,7 @@ class Import extends Component
             $retornos = [];
             $acao = '';
             $set = '';
+            $where = '';
             #$arrayCompara = [];
 
             foreach($finais as $key => $final) {
@@ -360,21 +367,18 @@ class Import extends Component
                 $values = $values.', '."'$valueTemp'";
 
                 #dd($colunasTemp, $valueTemp);
-                    # if coluna_8 existe na $tabelaSelecionada: update else insert
-                    $colunasSelect = substr($colunasName, 2, strlen($colunasName));
-                    if( $colunasTemp == $colunaBaseComparacaoUpdate) {
-                        #if(empty($dadosAntigos)) {
-                        #    $dadosAntigos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" where \"$colunaBaseComparacaoUpdate\" = '$valueTemp'");
-                        #}
-                        $dadosExistentes = DB::select("select * from \"$tabelaSelecionada\" where \"$colunaBaseComparacaoUpdate\" = '$valueTemp'");
-                        #array_push($arrayCompara, $dadosExistentes);
-                        foreach($dadosExistentes as $dadoExistente){
-                            $where = "Where \"$colunaBaseComparacaoUpdate\" ="."'".$dadoExistente->$colunaBaseComparacaoUpdate."'";
-                        }
+                $colunasSelect = substr($colunasName, 2, strlen($colunasName));
+                if( strtolower(trim($colunasTemp)) == strtolower(trim($colunaBaseComparacaoUpdate))) {
+                    $dadosExistentes = DB::select("select * from \"$tabelaSelecionada\" where \"$colunaBaseComparacaoUpdate\" = '$valueTemp'");
+                    foreach($dadosExistentes as $dadoExistente){
+                        $where = "Where \"$colunaBaseComparacaoUpdate\" ="."'".$dadoExistente->$colunaBaseComparacaoUpdate."'";
+                        try{
+                            $dadosAntigos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
+                            $set = $set.', '."\"$colunasTemp\" = '$valueTemp'";
+                        } catch (Exception $e) {}
+                        break;
                     }
-
-                        $set = $set.', '."\"$colunasTemp\" = '$valueTemp'";
-                        #$valorAntigo = $dadoExistente->$colunasTemp; # <- Criar uma lógica pra comparar e atualizar apenas os valores que efetivamente mudaram...!
+                }
 
                     if(!empty($dadosExistentes)) {
                         $acao = 'update';
@@ -384,10 +388,6 @@ class Import extends Component
 
                 }
             }
-
-            try{
-                $dadosAntigos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
-            } catch (Exception $e) {}
 
             if($acao == 'insert') {
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
@@ -420,6 +420,8 @@ class Import extends Component
                     ],
                     'invalidos' => [
                         $retornos
+                    ], 'acao' => [
+                        'insert'
                     ]
                 ]
                 );
@@ -477,6 +479,8 @@ class Import extends Component
                     ],
                     'invalidos' => [
                         $retornos
+                    ], 'acao' => [
+                        'update'
                     ]
                 ]
             );

@@ -104,7 +104,7 @@ class ImportJob implements ShouldQueue
                 $i++;
             }
         }
-
+return true; ###
         # Montar os arrays a importar
 
         $countArray = count($colunas);
