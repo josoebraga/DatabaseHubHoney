@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 # https://stackoverflow.com/questions/46141652/running-laravel-queuework-on-a-shared-hosting
 # https://talltips.novate.co.uk/laravel/using-queues-on-shared-hosting-with-laravel
@@ -81,7 +82,22 @@ class Import extends Component
 
     ####################################################################
 
-    public function validarTelefone($telefone)
+    protected function validarEndereco($cep)
+    {
+        $response = Http::get("http://viacep.com.br/ws/$cep/json");
+        return $response->json();
+    }
+
+    protected function validarEmail($email)
+    {
+        if(!preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/', $email)){
+            return 'inválido';
+           }else{
+            return 'válido';
+           }
+    }
+
+    protected function validarTelefone($telefone)
     {
         // Verificar se o telefone possui 10 ou 11 dígitos
         if (!preg_match('/^(\d{10}|\d{11})$/', $telefone)) {
@@ -90,9 +106,15 @@ class Import extends Component
             return "válido";
         }
     }
-    public function validarCpfCnpj($tipo, $cpf, $cnpj)
+
+    protected function validarCpfCnpj(String $tipo, String $cpf, String $cnpj)
     {
         if($tipo == 'cpf') {
+
+
+            if(!preg_match('/^\d{3}\d{3}\d{3}\d{2}$/', $cpf)) {
+                return "inválido";
+            }
 
             // Verificar se o CPF possui 11 dígitos
             if (strlen($cpf) != 11) {
@@ -129,6 +151,10 @@ class Import extends Component
             }
 
         } else if($tipo == 'cnpj') {
+
+            if(!preg_match('/^\d{2}\d{3}\d{3}\d{4}\d{2}$/', $cnpj)) {
+                return "inválido";
+            }
 
             // Verificar se o CNPJ possui 14 dígitos
             if (strlen($cnpj) != 14) {
@@ -183,6 +209,7 @@ class Import extends Component
         }
 
     }
+
     public function save()
     {
 
@@ -332,6 +359,13 @@ class Import extends Component
                 $valueTemp = trim($f);
                 $retornoTemp = '';
 
+                #dd($this->validarCpfCnpj('cnpj', '01445674076', '35711318000165'));
+                #dd($this->validarTelefone('5185341875'));
+                #dd($this->validarEmail('ni@ni.com.br'));
+                #dd($this->validarEndereco('93225070'));
+
+                # Fazer o descarte de dados inválidos
+
                 if(strpos(strtolower('_'.$colunasTemp), strtolower('CPF')) > 0 || strpos(strtolower('_'.$colunasTemp), strtolower('CNPJ')) > 0) { # Str Contains
                     $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
                     $tipo = 'cpf';
@@ -350,9 +384,23 @@ class Import extends Component
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('EMAIL')) > 0) {
-                    #dd(strpos($colunasTemp, 'ENAIL'));
+                    $retornoTemp = $this->validarEmail($valueTemp);
+                    if($retornoTemp == 'inválido') {
+                        array_push($retornos, [$colunasTemp => $retornoTemp]);
+                    }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
                     #dd(strpos($colunasTemp, 'CEP'));
+                    $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
+                    $retornoTemp = $this->validarEndereco($valueTemp);
+                    try {
+                        if($retornoTemp['erro'] == true) {
+                            $retornoTemp = 'inválido';
+                        }
+                    } catch(Exception $e) {
+                    }
+                    if($retornoTemp == 'inválido') {
+                        array_push($retornos, [$colunasTemp => $retornoTemp]);
+                    }
                 }
 
                 $colunasName = $colunasName.', '."\"$colunasTemp\"";
