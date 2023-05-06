@@ -9,15 +9,6 @@
         </div>
         <div class="card-body px-0 pt-0 pb-2">
           <div class="table-responsive p-0">
-
-{{--             <form wire:submit.prevent="save">
-                <input type="file" wire:model="arquivo" class="custom-file-input">
-
-                @error('arquivo') <span class="error">{{ $message }}</span> @enderror
-
-                <button type="submit" class="btn btn-outline-primary btn-sm mb-0">Save Photo</button>
-            </form>
- --}}
     <div>
         <form>
             {{csrf_field()}}
@@ -60,6 +51,7 @@
               </div>
 
               <div class="col-sm">
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <span>Escolha a tabela onde deseja salvar os dados:</span>
                 <select wire:model="tabelaSelecionada" class="form-control-sm" name="choices-button" id="choices-button" placeholder="Departure">
                     <option value="" selected="">(Escolha uma tabela)</option>
@@ -73,6 +65,7 @@
               @if($tabelaSelecionada)
               <br><br>
               <div class="col-sm">
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <span>Escolha a coluna que servirá para verificar se o registro existe:</span>
                 <select wire:model="colunaSelecionada" class="form-control-sm" name="choices-button" id="choices-button" placeholder="Departure">
                     <option value="" selected="">(Escolha uma coluna)</option>
@@ -88,6 +81,7 @@
               @if($arquivo)
               @if(!empty($tabelaSelecionada) && !empty($colunaSelecionada))
               <div class="col-sm">
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <button type="submit" wire:click.prevent="save" class="btn btn-outline-primary btn-sm mb-0">Iniciar</button>
               </div>
               <br><br>

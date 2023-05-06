@@ -20,6 +20,7 @@ use App\Http\Livewire\LaravelExamples\UserManagement;
 use App\Http\Controllers\Import\ImportController;
 use App\Http\Livewire\Import\Import;
 use App\Http\Livewire\Import\Monitoramento;
+use App\Http\Livewire\Historico\HistoricoComponent;
 
 use Illuminate\Http\Request;
 
@@ -59,5 +60,7 @@ Route::middleware('auth')->group(function () {
     #Route::get('/import', [ImportController::class, 'index'])->name('importIndex');
     Route::get('/import', Import::class)->name('import');
     Route::get('/monitoramento', Monitoramento::class)->name('monitoramento');
+    Route::get('/monitoramento', Monitoramento::class)->name('monitoramento');
+    Route::get('/historico', HistoricoComponent::class)->name('historico');
 });
 

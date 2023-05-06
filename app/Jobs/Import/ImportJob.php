@@ -310,7 +310,7 @@ class ImportJob implements ShouldQueue
 
                 #dd($json);
 
-                $insertLog = "INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", \"created_at\", \"updated_at\") VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());";
+                $insertLog = "INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());";
                 $insertLog = str::replace('""', '"', $insertLog);
                 DB::insert($insertLog);
 
@@ -365,7 +365,7 @@ class ImportJob implements ShouldQueue
             $json = str::replace('[{', '{', $json);
             $json = str::replace('}]', '}', $json);
             #dd($json);
-            DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+            DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
 
             ######## End Log #######
         }
