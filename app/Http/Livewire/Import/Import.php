@@ -344,6 +344,7 @@ class Import extends Component
 
             unset($dadosAntigos);
             $json = array();
+            $invalido = false;
             $colunasName = '';
             $values = '';
             $retornos = [];
@@ -375,6 +376,7 @@ class Import extends Component
                     $retornoTemp = $this->validarCpfCnpj($tipo, $valueTemp, $valueTemp);
                     if($retornoTemp == 'inválido') {
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
+                        $invalido = true;
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('FONE')) > 0) {
                     // Remover espaços, parênteses e hífens do telefone
@@ -431,7 +433,9 @@ class Import extends Component
             if($acao == 'insert') {
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
                 $insert = str_replace('(, ', '(', $insert);
-                DB::insert($insert);
+                if($invalido == false) {
+                    DB::insert($insert);
+                }
 
                 $colunasName = substr($colunasName, 3);
                 $values = substr($values, 3);
@@ -489,7 +493,9 @@ class Import extends Component
                 #dd($update);
                 #$valorAntigo;
                 #dd($arrayCompara[0][0]);
-                DB::update($update);
+                if($invalido == false) {
+                    DB::update($update);
+                }
             }
 
             # Atualiza a quantidade de linhas importadas no monitoramento
