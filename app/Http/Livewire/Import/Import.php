@@ -284,8 +284,6 @@ class Import extends Component
 
         $i = 1;
 
-        #dd($arrayInsertFinal);
-
         # Trocar a posição da coluna $colunaBaseComparacaoUpdate para o [0]
 
         $arrayTempTroca = $arrayInsertFinal;
@@ -301,8 +299,6 @@ class Import extends Component
             }
         }
 
-        #dd($chave);
-        #dd($arrayTempTroca);
         $i = 0;
         while($i <= count($arrayTempTroca)-1) {
             if($arrayTempTroca[$i][$chavePrincipal] > 0) {
@@ -327,7 +323,6 @@ class Import extends Component
             $acao = '';
             $set = '';
             $where = '';
-            #$arrayCompara = [];
 
             foreach($finais as $key => $final) {
 
@@ -337,7 +332,6 @@ class Import extends Component
                 $valueTemp = trim($f);
                 $retornoTemp = '';
 
-                #dd(strtolower($colunasTemp));
                 if(strpos(strtolower('_'.$colunasTemp), strtolower('CPF')) > 0 || strpos(strtolower('_'.$colunasTemp), strtolower('CNPJ')) > 0) { # Str Contains
                     $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
                     $tipo = 'cpf';
@@ -349,8 +343,6 @@ class Import extends Component
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('FONE')) > 0) {
-                    #dd(strtolower($colunasTemp));
-                    #dd(strpos($colunasTemp, 'FONE'));
                     // Remover espaços, parênteses e hífens do telefone
                     $valueTemp = preg_replace('/[\s()+-]/', '', trim($valueTemp));
                     $retornoTemp = $this->validarTelefone($valueTemp);
@@ -366,19 +358,18 @@ class Import extends Component
                 $colunasName = $colunasName.', '."\"$colunasTemp\"";
                 $values = $values.', '."'$valueTemp'";
 
-                #dd($colunasTemp, $valueTemp);
                 $colunasSelect = substr($colunasName, 2, strlen($colunasName));
                 if( strtolower(trim($colunasTemp)) == strtolower(trim($colunaBaseComparacaoUpdate))) {
                     $dadosExistentes = DB::select("select * from \"$tabelaSelecionada\" where \"$colunaBaseComparacaoUpdate\" = '$valueTemp'");
                     foreach($dadosExistentes as $dadoExistente){
                         $where = "Where \"$colunaBaseComparacaoUpdate\" ="."'".$dadoExistente->$colunaBaseComparacaoUpdate."'";
-                        try{
-                            $dadosAntigos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
-                            $set = $set.', '."\"$colunasTemp\" = '$valueTemp'";
-                        } catch (Exception $e) {}
-                        break;
                     }
                 }
+
+                try{
+                    $dadosAntigos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
+                    $set = $set.', '."\"$colunasTemp\" = '$valueTemp'";
+                } catch (Exception $e) {}
 
                     if(!empty($dadosExistentes)) {
                         $acao = 'update';
@@ -393,8 +384,6 @@ class Import extends Component
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
                 $insert = str_replace('(, ', '(', $insert);
                 DB::insert($insert);
-                # Aqui precisa registrar que o registo chegou
-                #DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
 
                 $colunasName = substr($colunasName, 3);
                 $values = substr($values, 3);
