@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('coluna_6')->nullable();
             $table->string('coluna_7')->nullable();
             $table->string('coluna_8')->nullable();
+            $table->integer('user_id')->nullable();
             $table->timestamps();
         });
     }

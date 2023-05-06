@@ -218,8 +218,10 @@ class Import extends Component
             'arquivo' => 'mimes:xls,txt,csv,xlsx', // 1MB Max
         ]);
 
+        #dd(Auth::user()->id);
+
         $teste = Teste::create([
-            'coluna_1' => 'Teste: Coluna 1',
+            'coluna_1' => 'Teste: Coluna 1'
         ]);
         $this->arquivo->storeAs("public/arquivos/$teste->id/", "$teste->id.csv");
         $teste = Teste::find($teste->id);
@@ -231,10 +233,11 @@ class Import extends Component
         $teste->coluna_6 = 0;
         $teste->coluna_7 = 0;
         $teste->coluna_8 = $this->colunaSelecionada;
+        $teste->user_id = Auth::user()->id;
         $teste->save();
 
         ####### início
-
+/*
 
 
         # Busca o ID a se trabalhar
@@ -280,7 +283,7 @@ class Import extends Component
             }
         }
 
-        # Montar os arrays a importar
+        # Montar os arrays a importar #################################
 
         $countArray = count($colunas);
         $arrayInsert = [];
@@ -360,12 +363,7 @@ class Import extends Component
                 $valueTemp = trim($f);
                 $retornoTemp = '';
 
-                #dd($this->validarCpfCnpj('cnpj', '01445674076', '35711318000165'));
-                #dd($this->validarTelefone('5185341875'));
-                #dd($this->validarEmail('ni@ni.com.br'));
-                #dd($this->validarEndereco('93225070'));
-
-                # Fazer o descarte de dados inválidos
+                ####### Fazer o descarte de dados inválidos ###############################################################
 
                 if(strpos(strtolower('_'.$colunasTemp), strtolower('CPF')) > 0 || strpos(strtolower('_'.$colunasTemp), strtolower('CNPJ')) > 0) { # Str Contains
                     $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
@@ -384,26 +382,33 @@ class Import extends Component
                     $retornoTemp = $this->validarTelefone($valueTemp);
                     if($retornoTemp == 'inválido') {
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
+                        $invalido = true;
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('EMAIL')) > 0) {
                     $retornoTemp = $this->validarEmail($valueTemp);
                     if($retornoTemp == 'inválido') {
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
+                        $colunasTemp = 'invalido@invalido.com.br';
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
-                    #dd(strpos($colunasTemp, 'CEP'));
-                    $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
-                    $retornoTemp = $this->validarEndereco($valueTemp);
-                    try {
-                        if($retornoTemp['erro'] == true) {
-                            $retornoTemp = 'inválido';
-                        }
-                    } catch(Exception $e) {
-                    }
-                    if($retornoTemp == 'inválido') {
-                        array_push($retornos, [$colunasTemp => $retornoTemp]);
-                    }
+                    if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $colunasTemp)){
+                        $retornoTemp = 'inválido';
+                       } else {
+                            $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
+                            $retornoTemp = $this->validarEndereco($valueTemp);
+                            try {
+                                if($retornoTemp['erro'] == true) {
+                                    $retornoTemp = 'inválido';
+                                }
+                            } catch(Exception $e) {
+                            }
+                            if($retornoTemp == 'inválido') {
+                                array_push($retornos, [$colunasTemp => $retornoTemp]);
+                            }
+                       }
                 }
+
+                ################################################################################################################
 
                 $colunasName = $colunasName.', '."\"$colunasTemp\"";
                 $values = $values.', '."'$valueTemp'";
@@ -475,6 +480,7 @@ class Import extends Component
                 $json = str::replace('\"', '"', $json);
                 $json = str::replace('" "', '"', $json);
                 $json = str::replace('" ', '"', $json);
+                $json = str::replace('},{', ',', $json);
 
                 #dd($json);
 
@@ -560,8 +566,11 @@ class Import extends Component
 
         dd('Ok');
 
-
+*/
         ####### Fim
+
+
+        #dd('Ok');
 
         return redirect()->route('monitoramento');
 

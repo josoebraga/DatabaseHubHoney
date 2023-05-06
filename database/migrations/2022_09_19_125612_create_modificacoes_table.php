@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('NOME_TABELA')->nullable();
             $table->text('LOG')->nullable();
-            $table->integer('USER_ID')->nullable();
+            $table->bigInteger('USER_ID')->nullable();
             $table->timestamps();
         });
     }
