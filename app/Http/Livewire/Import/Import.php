@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\Teste;
+use App\Models\Tabelas;
 use App\Models\NaoPerturbe;
 use \PhpOffice\PhpSpreadsheet\Reader\Csv as ReadCsv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as Spreadsheet;
@@ -30,7 +31,7 @@ class Import extends Component
 
     public function render()
     {
-        $tabelas = $this->tabelas();
+        $tabelas = Tabelas::tabelas();
         if(!empty($this->tabelaSelecionada)) {
             $this->colunas = $this->colunas();
         } else {
@@ -39,33 +40,6 @@ class Import extends Component
         return view('livewire.import.import', ['tabelas' => $tabelas]);
     }
 
-
-    public function tabelas()
-    {
-        return DB::select("
-            select table_name
-            from information_schema.tables
-            where table_catalog = 'honey' and
-            table_schema = 'public' and
-            table_type = 'BASE TABLE' and
-            table_name not in (
-            'password_resets',
-            'failed_jobs',
-            'personal_access_tokens',
-            'jobs',
-            'teste',
-            'modificacoes',
-            'migrations',
-            'users',
-            'permissions',
-            'model_has_permissions',
-            'model_has_roles',
-            'roles',
-            'role_has_permissions',
-            'users_type'
-            )
-        ");
-    }
 
     public function colunas()
     {
