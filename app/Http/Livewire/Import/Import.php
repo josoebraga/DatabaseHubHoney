@@ -233,6 +233,17 @@ class Import extends Component
         $worksheet = $spreadsheet->getActiveSheet();
         $i = 2;
 
+        # Preenche um valor nas células vazias
+
+        foreach ($worksheet->getRowIterator() as $row) {
+            foreach ($row->getCellIterator() as $cell) {
+                $value = $cell->getValue();
+                if (empty($value)) {
+                    $cell->setValue('null');
+                }
+            }
+        }
+
         # Busca as colunas da tabela escolhida
 
         $colunasDatabelaSelecionada = DB::select("
@@ -458,7 +469,7 @@ class Import extends Component
 
                 #dd($json);
 
-                $insertLog = "INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", \"created_at\", \"updated_at\") VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());";
+                $insertLog = "INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());";
                 $insertLog = str::replace('""', '"', $insertLog);
                 DB::insert($insertLog);
 
@@ -513,7 +524,7 @@ class Import extends Component
             $json = str::replace('[{', '{', $json);
             $json = str::replace('}]', '}', $json);
             #dd($json);
-            DB::insert("INSERT INTO public.modificacoes (\"NOME_TABELA\", \"LOG\", \"USER_ID\", created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
+            DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
 
             ######## End Log #######
         }

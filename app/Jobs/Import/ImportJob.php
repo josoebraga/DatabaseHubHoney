@@ -86,6 +86,17 @@ class ImportJob implements ShouldQueue
         $worksheet = $spreadsheet->getActiveSheet();
         $i = 2;
 
+        # Preenche um valor nas células vazias
+
+        foreach ($worksheet->getRowIterator() as $row) {
+            foreach ($row->getCellIterator() as $cell) {
+                $value = $cell->getValue();
+                if (empty($value)) {
+                    $cell->setValue('null');
+                }
+            }
+        }
+
         # Busca as colunas da tabela escolhida
 
         $colunasDatabelaSelecionada = DB::select("
@@ -187,6 +198,9 @@ class ImportJob implements ShouldQueue
                 foreach($final as $key => $f) {
 
                 $colunasTemp = trim($key);
+                if(empty($colunasTemp)) {
+                    $colunasTemp = 'NULL';
+                }
                 $valueTemp = trim($f);
                 $retornoTemp = '';
 
@@ -215,7 +229,6 @@ class ImportJob implements ShouldQueue
                     $retornoTemp = $this->validarEmail($valueTemp);
                     if($retornoTemp == 'inválido') {
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
-                        $colunasTemp = 'invalido@invalido.com.br';
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
                     if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $colunasTemp)){

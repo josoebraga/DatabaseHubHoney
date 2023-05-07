@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Historico;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 use App\Models\Modificacoes;
 use App\Models\Tabelas;
@@ -10,24 +11,38 @@ use Illuminate\Support\Carbon;
 class HistoricoComponent extends Component
 {
 
+    use WithPagination;
+
     private $tabelas;
+    public $tabelaSelecionada;
+    public $data;
+    private $historicos;
+
+    public function carregar()
+    {
+        $carbon = Carbon::parse($this->data);
+        $dataFormatada = $carbon->format('Y-m-d');
+        $this->historicos = Modificacoes::leftJoin('users', 'users.id', '=', 'modificacoes.user_id')->where('nome_tabela', '=', "$this->tabelaSelecionada")->whereRaw("to_char(modificacoes.created_at, 'YYYY-MM-DD') = '$dataFormatada'")->select('modificacoes.*', 'users.name')->orderBy('id', 'asc')->paginate(100);
+        #dd($this->historicos);
+        #foreach($this->historicos as $key => $historico) {
+        #    dd(json_decode($historico->historico));
+        #}
+
+
+    }
 
     public function mount()
     {
-        $this->tabelas = Tabelas::tabelas();
+        if(!empty($this->tabelaSelecionada) && !empty($this->data)) {
+            $this->carregar();
+        }
     }
+
     public function render()
     {
-        $data = "2023-05-06 19:45:26.000";
-        $carbon = Carbon::parse($data);
-        $dataFormatada = $carbon->format('Y-m-d');
-        $historicos = Modificacoes::where('nome_tabela', '=', 'lista_de_clientes_vip')->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->get();
-        #dd($historicos);
-        foreach($historicos as $key => $historico) {
-            #dd(json_decode($historico->historico));
-        }
 
-
+        $this->tabelas = Tabelas::tabelas();
+        $this->mount();
         return view('livewire.historico.historico-component');
     }
 }
