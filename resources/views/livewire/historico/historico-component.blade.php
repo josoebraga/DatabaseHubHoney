@@ -2,7 +2,7 @@
     <div class="col-12">
       <div class="card mb-4">
         <div class="card-header pb-0">
-          <h6>Authors table</h6>
+          <h6>Histórico dos Clientes do Mailing</h6>
         </div>
 
         <div class="card-body pt-4 p-3">

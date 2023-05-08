@@ -21,6 +21,7 @@ use App\Http\Controllers\Import\ImportController;
 use App\Http\Livewire\Import\Import;
 use App\Http\Livewire\Import\Monitoramento;
 use App\Http\Livewire\Historico\HistoricoComponent;
+use App\Http\Livewire\Relatorios\VisaoMailingComponent;
 
 use Illuminate\Http\Request;
 
@@ -62,5 +63,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/monitoramento', Monitoramento::class)->name('monitoramento');
     Route::get('/monitoramento', Monitoramento::class)->name('monitoramento');
     Route::get('/historico', HistoricoComponent::class)->name('historico');
+    Route::get('/relatorios', VisaoMailingComponent::class)->name('relatorios');
 });
 
