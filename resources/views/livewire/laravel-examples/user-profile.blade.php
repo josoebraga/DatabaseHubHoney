@@ -88,7 +88,7 @@
                                 <label for="user.location" class="form-control-label">{{ __('Localidade') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
                                     <input wire:model="user.location" class="form-control" type="text"
-                                        placeholder="Location" id="name">
+                                        placeholder="Localidade" id="name">
                                 </div>
                                 @error('user.location') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
@@ -115,13 +115,13 @@
                         <label for="about">{{ 'Comentários' }}</label>
                         <div class="@error('user.about')border border-danger rounded-3 @enderror">
                             <textarea wire:model="user.about" class="form-control" id="about" rows="3"
-                                placeholder="Say something about yourself"></textarea>
+                                placeholder="Campo livre para escrever alguma informação sobre o usuário"></textarea>
                         </div>
                         @error('user.about') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
                     @if(Auth::user()->user_type_id == 1)
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Save Changes' }}</button>
+                        <button type="submit" class="btn bg-gradient-dark btn-md mt-4 mb-4">{{ 'Salvar Alterações' }}</button>
                     </div>
                     @else
                     <div wire:model="showSuccesNotification" class="mt-3 alert alert-primary alert-dismissible fade show" role="alert">

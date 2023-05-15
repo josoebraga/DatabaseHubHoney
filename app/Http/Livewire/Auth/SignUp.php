@@ -34,7 +34,7 @@ class SignUp extends Component
 
         auth()->login($user);
 
-        return redirect('/dashboard');
+        return redirect('/relatorios');
     }
 
     public function render()

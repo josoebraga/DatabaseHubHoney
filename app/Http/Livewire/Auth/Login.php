@@ -18,7 +18,7 @@ class Login extends Component
 
     public function mount() {
         if(auth()->user()){
-            redirect('/dashboard');
+            redirect('/relatorios');
         }
         $this->fill(['email' => 'admin@softui.com', 'password' => 'secret']);
     }

@@ -34,7 +34,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                        <div class="card-footer text-center pt-0 px-lg-2 px-1" style="display: none;">
                             <small class="text-muted">{{ __('Esqueceu sua senha? Recupere ela') }} <a
                                     href="{{ route('forgot-password') }}"
                                     class="text-info text-gradient font-weight-bold">{{ __('aqui') }}</a></small>

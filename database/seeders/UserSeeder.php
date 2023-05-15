@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
 
         DB::table('users')->insert([
             'name' => 'admin',
-            'email' => 'admin@softui.com',
+            'email' => 'admin@admin.com',
             'password' => Hash::make('secret'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
