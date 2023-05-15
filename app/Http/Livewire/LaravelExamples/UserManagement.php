@@ -54,10 +54,15 @@ class UserManagement extends Component
     }
 
     public function updateUserStatus($id, $status) {
+
+        $getDate = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->toDateTimeString())->toDateTimeString();
+        $getDate = date('YmdHis', strtotime($getDate));
+        #dd($getDate);
+
         $user = User::findOrFail($id);
         $user->status = ($status == 1 ? false : true);
-        $user->password = Carbon::now();
-        $user->updated_at = ($status == 1 ? Carbon::now() : Hash::make('password'));
+        $user->password = ($status == 1 ? $getDate : Hash::make('password'));
+        $user->updated_at = Carbon::now();
         $user->save();
         $this->mount();
     }
