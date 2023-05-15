@@ -1,5 +1,6 @@
 <div class="main-content">
     {{csrf_field()}}
+@if(Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 2)
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
@@ -8,7 +9,7 @@
                         <div>
                             <h5 class="mb-0">Lista de Usuários</h5>
                         </div>
-                        <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button">+&nbsp; Novo Usuário</a>
+                        <a href="#" wire:click.prevent="liberaCamposNovoUsuario" class="btn bg-gradient-primary btn-sm mb-0" type="button">@if($this->botaoNovoUsuario == true)-@else+@endif&nbsp; Novo Usuário</a>
                     </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
@@ -37,6 +38,45 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @if($this->botaoNovoUsuario == true)
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <label>Nome:</label>
+                                        <input type="text" wire:model.lazy="nomeCreate" class="form-control">
+                                    </td>
+                                    <td>
+                                        <label>e-mail:</label>
+                                        <input wire:model.lazy="emailCreate" class="form-control" type="email" placeholder="exemplo@examplo.com.br">
+                                    </td>
+                                    <td>
+                                        <label>Telefone:</label>
+                                        <input type="tel" wire:model.lazy="telefoneCreate" class="form-control" placeholder="40770888444">
+                                    </td>
+                                    <td>
+                                        <label>Localidade:</label>
+                                        <input type="text" wire:model.lazy="localidadeCreate" class="form-control" placeholder="Localidade">
+                                    </td>
+                                    <td>
+                                        <label>Perfil:</label>
+                                        <select wire:model.lazy="perfilCreate" class="form-control form-control-alternative" name="choices-button" id="choices-button">
+                                            <option>(Escolha Uma Opção)</option>
+                                            @forelse ($usersType as $userType)
+                                            <option value="{{$userType->id}}">{{$userType->type}}</option>
+                                            @empty
+                                            @endforelse
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" colspan="7">
+                                        @if(!empty($nomeCreate) && !empty($emailCreate) && !empty($telefoneCreate) && !empty($localidadeCreate) && !empty($perfilCreate))
+                                            <a wire:click.prevent="store" class="btn btn-sm btn-primary">Salvar</a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endif
+
                                 @forelse ($users as $key => $user)
 
                                 <tr @if($user->status == false) class="table-danger" @endif>
@@ -85,5 +125,16 @@
             </div>
         </div>
     </div>
-
+@else
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4 mx-4">
+            <br>
+            <div class="alert alert-danger alert-dismissible fade show" style="color: white;" role="alert">
+                <strong>Atenção!</strong> Seu usuário não tem permissão para acessar esta página!</strong>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 </div>
