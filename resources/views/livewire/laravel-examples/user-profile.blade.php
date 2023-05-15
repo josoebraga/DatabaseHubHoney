@@ -1,4 +1,5 @@
 <div>
+    @if(Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 2)
     <div class="container-fluid">
         <div class="page-header min-height-300 border-radius-xl mt-4"
             style="background-image: url('../assets/img/curved-images/curved0.jpg'); background-position-y: 50%;">
@@ -136,4 +137,16 @@
             </div>
         </div>
     </div>
+    @else
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 mx-4">
+                <br>
+                <div class="alert alert-danger alert-dismissible fade show" style="color: white;" role="alert">
+                    <strong>Atenção!</strong> Seu usuário não tem permissão para acessar esta página!</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
