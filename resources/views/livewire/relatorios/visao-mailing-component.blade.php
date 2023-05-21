@@ -74,6 +74,9 @@
                       </thead>
                       <tbody>
                         @if($this->contagens)
+                        @php
+                            $label = array(); $data = array();
+                        @endphp
                         @forelse($this->contagens as $key => $contagem)
 
                         <tr>
@@ -86,13 +89,18 @@
                             <p class="text-sm font-weight-bold mb-0">{{$contagem}}</p>
                           </td>
 
+                            @php
+                                array_push($label, $key);
+                                array_push($data, $contagem);
+                            @endphp
+
 
                           <td class="align-middle text-center">
                             <div class="d-flex align-items-center justify-content-center">
-                              <span class="me-2 text-xs font-weight-bold">{{$contagem/$this->total}}</span>
+                              <span class="me-2 text-xs font-weight-bold">{{($contagem/$this->qtdTotalDeRegistrosTabela)*100}}%</span>
                               <div>
                                 <div class="progress">
-                                  <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="{{$contagem}}" aria-valuemin="0" aria-valuemax="{{$this->total}}" style="width: 15%;"></div>
+                                  <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="{{$contagem}}" aria-valuemin="0" aria-valuemax="{{$this->qtdTotalDeRegistrosTabela}}" style="width: 15%;"></div>
                                 </div>
                               </div>
                             </div>
@@ -103,6 +111,16 @@
                         @empty
 
                         @endforelse
+
+                        <tr>
+                            <td class="align-middle text-center">
+                                <p class="text-sm font-weight-bold mb-0">Total de Registros</p>
+                            </td>
+                            <td class="align-middle text-center" colspan="2">
+                                <p class="text-sm font-weight-bold mb-0">{{$this->qtdTotalDeRegistrosTabela}}</p>
+                            </td>
+                        </tr>
+
                         @endif
 
 
@@ -115,6 +133,7 @@
             </div>
           </div>
 
+          <button wire:click="export" wire:loading.attr="disabled">Exportar Dados</button>
 
 
         </div>
@@ -122,6 +141,4 @@
     </div>
 
 </div>
-
-
 

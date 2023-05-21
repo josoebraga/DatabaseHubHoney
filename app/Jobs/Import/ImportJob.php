@@ -186,6 +186,7 @@ class ImportJob implements ShouldQueue
         foreach($arrayInsertFinal as $finais) {
 
             unset($dadosAntigos);
+            unset($dadosNovos);
             $json = array();
             $invalido = false;
             $colunasName = '';
@@ -233,7 +234,8 @@ class ImportJob implements ShouldQueue
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
-                    if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $colunasTemp)){
+                    #dd('CEP');
+                    if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $valueTemp)){
                         $retornoTemp = 'inválido';
                        } else {
                             $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
@@ -277,6 +279,7 @@ class ImportJob implements ShouldQueue
 
                 }
             }
+
 
             if($acao == 'insert') {
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
@@ -340,11 +343,70 @@ class ImportJob implements ShouldQueue
                 $set
                 $where";
                 #dd($update);
+                #dd($where);
                 #$valorAntigo;
                 #dd($arrayCompara[0][0]);
                 if($invalido == false) {
                     DB::update($update);
                 }
+
+
+                try {
+                    ######## Start Log #######
+
+                    $dadosNovos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
+                    #dd($where, [$dadosNovos, $dadosAntigos]);
+                    #if(/*$dadosNovos != $dadosAntigos &&*/ !empty($dadosNovos) && !empty($dadosAntigos)) {
+
+                        /*dd(                [
+                            'old'=>[
+                                $dadosAntigos
+                            ],
+                            'new'=>[
+                                $dadosNovos
+                            ],
+                            'invalidos' => [
+                                $retornos
+                            ], 'acao' => [
+                                'update'
+                            ]
+                        ]
+                            );*/
+
+                    array_push($json,
+                        [
+                            'old'=>[
+                                $dadosAntigos
+                            ],
+                            'new'=>[
+                                $dadosNovos
+                            ],
+                            'invalidos' => [
+                                $retornos
+                            ], 'acao' => [
+                                'update'
+                            ]
+                        ]
+                    );
+                    $json = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                    $json = str::replace('[[', '[', $json);
+                    $json = str::replace(']]', ']', $json);
+                    $json = str::replace('[{', '{', $json);
+                    $json = str::replace('}]', '}', $json);
+                    #dd($json);
+                    DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+                    #dd("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+
+                    #sleep(3);
+
+                    ######## End Log #######
+                #}
+
+                } catch (Exception $e) {}
+
+
+
+
             }
 
             # Atualiza a quantidade de linhas importadas no monitoramento
@@ -356,44 +418,8 @@ class ImportJob implements ShouldQueue
 
             #sleep(4);
 
-            }
 
-            try {
-            ######## Start Log #######
-
-            $dadosNovos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
-            #dd([$dadosNovos, $dadosAntigos]);
-            if($dadosNovos != $dadosAntigos && !empty($dadosNovos) && !empty($dadosAntigos)) {
-            array_push($json,
-                [
-                    'old'=>[
-                        $dadosAntigos
-                    ],
-                    'new'=>[
-                        $dadosNovos
-                    ],
-                    'invalidos' => [
-                        $retornos
-                    ], 'acao' => [
-                        'update'
-                    ]
-                ]
-            );
-            $json = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            $json = str::replace('[[', '[', $json);
-            $json = str::replace(']]', ']', $json);
-            $json = str::replace('[{', '{', $json);
-            $json = str::replace('}]', '}', $json);
-            #dd($json);
-            DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
-
-            #sleep(3);
-
-            ######## End Log #######
         }
-
-        } catch (Exception $e) {}
-
 
         #$qsCompara = array_unique($qsCompara);
         #dd($arrayCompara);

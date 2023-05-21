@@ -89,23 +89,28 @@
                         </div>
                     </td>
                     <td>
-                        @if(isset($json) && property_exists($json, 'old'))
-                            @forelse ($json->old as $key => $value)
-                            <p class="text-xs font-weight-bold mb-0">{{"$key: $value\n"}}</p>
-                            @empty
-
-                            @endforelse
+                        @if(isset($json) && property_exists($json, 'old') && isset($json) && property_exists($json, 'new'))
+                            @foreach ($json->old as $key => $value)
+                                @if (isset($json->new->$key) && $json->new->$key !== $value)
+                                    <p class="text-xs font-weight-bold mb-0 text-danger">{{"$key: $value\n"}}</p>
+                                @else
+                                    <p class="text-xs font-weight-bold mb-0">{{"$key: $value\n"}}</p>
+                                @endif
+                            @endforeach
                         @endif
                     </td>
                     <td>
                         @if(isset($json) && property_exists($json, 'new'))
-                            @forelse ($json->new as $key => $value)
-                            <p class="text-xs font-weight-bold mb-0">{{"$key: $value\n"}}</p>
-                            @empty
-
-                            @endforelse
+                            @foreach ($json->new as $key => $value)
+                                @if (isset($json->old->$key) && $json->old->$key !== $value)
+                                    <p class="text-xs font-weight-bold mb-0 text-danger">{{"$key: $value\n"}}</p>
+                                @else
+                                    <p class="text-xs font-weight-bold mb-0">{{"$key: $value\n"}}</p>
+                                @endif
+                            @endforeach
                         @endif
                     </td>
+
                     <td class="align-middle text-center">
                         @if(isset($json) && property_exists($json, 'invalidos'))
                             @forelse ($json->invalidos as $key => $value)
