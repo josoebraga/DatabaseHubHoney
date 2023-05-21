@@ -354,7 +354,7 @@ class ImportJob implements ShouldQueue
             $linhasImportadas++;
             $i++;
 
-            sleep(3);
+            #sleep(4);
 
             }
 
@@ -386,6 +386,8 @@ class ImportJob implements ShouldQueue
             $json = str::replace('}]', '}', $json);
             #dd($json);
             DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+
+            #sleep(3);
 
             ######## End Log #######
         }

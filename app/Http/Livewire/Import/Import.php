@@ -211,13 +211,14 @@ class Import extends Component
         $teste->save();
 
         ####### início
-/*
+#/*
 
 
         # Busca o ID a se trabalhar
 
-        $importador = Teste::orderBy('created_at', 'desc')->select('id', 'coluna_5', 'coluna_1', 'coluna_8')->first();
+        $importador = Teste::orderBy('created_at', 'desc')->select('id', 'user_id', 'coluna_5', 'coluna_1', 'coluna_8')->first();
         $id = $importador->id;
+        $userId = $importador->user_id;
         $tabelaSelecionada = $importador->coluna_5;
         $arquivo = $importador->coluna_1;
         $colunaBaseComparacaoUpdate = $importador->coluna_8;
@@ -328,9 +329,12 @@ class Import extends Component
         $arrayInsertFinal = $arrayTempTroca;
         unset($arrayTempTroca);
 
+        $linhasImportadas = 1;
+
         foreach($arrayInsertFinal as $finais) {
 
             unset($dadosAntigos);
+            unset($dadosNovos);
             $json = array();
             $invalido = false;
             $colunasName = '';
@@ -345,6 +349,9 @@ class Import extends Component
                 foreach($final as $key => $f) {
 
                 $colunasTemp = trim($key);
+                if(empty($colunasTemp)) {
+                    $colunasTemp = 'NULL';
+                }
                 $valueTemp = trim($f);
                 $retornoTemp = '';
 
@@ -373,7 +380,6 @@ class Import extends Component
                     $retornoTemp = $this->validarEmail($valueTemp);
                     if($retornoTemp == 'inválido') {
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
-                        $colunasTemp = 'invalido@invalido.com.br';
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
                     if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $colunasTemp)){
@@ -396,6 +402,7 @@ class Import extends Component
                 ################################################################################################################
 
                 $colunasName = $colunasName.', '."\"$colunasTemp\"";
+                $valueTemp = str_replace("'", "", $valueTemp);
                 $values = $values.', '."'$valueTemp'";
 
                 $colunasSelect = substr($colunasName, 2, strlen($colunasName));
@@ -419,6 +426,7 @@ class Import extends Component
 
                 }
             }
+
 
             if($acao == 'insert') {
                 $insert = "insert into \"$tabelaSelecionada\" ($colunasName, \"created_at\", \"updated_at\") values ($values, NOW(), NOW());";
@@ -469,7 +477,7 @@ class Import extends Component
 
                 #dd($json);
 
-                $insertLog = "INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());";
+                $insertLog = "INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());";
                 $insertLog = str::replace('""', '"', $insertLog);
                 DB::insert($insertLog);
 
@@ -482,55 +490,83 @@ class Import extends Component
                 $set
                 $where";
                 #dd($update);
+                #dd($where);
                 #$valorAntigo;
                 #dd($arrayCompara[0][0]);
                 if($invalido == false) {
                     DB::update($update);
                 }
+
+
+                try {
+                    ######## Start Log #######
+
+                    $dadosNovos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
+                    #dd($where, [$dadosNovos, $dadosAntigos]);
+                    #if(/*$dadosNovos != $dadosAntigos &&*/ !empty($dadosNovos) && !empty($dadosAntigos)) {
+
+                        /*dd(                [
+                            'old'=>[
+                                $dadosAntigos
+                            ],
+                            'new'=>[
+                                $dadosNovos
+                            ],
+                            'invalidos' => [
+                                $retornos
+                            ], 'acao' => [
+                                'update'
+                            ]
+                        ]
+                            );*/
+
+                    array_push($json,
+                        [
+                            'old'=>[
+                                $dadosAntigos
+                            ],
+                            'new'=>[
+                                $dadosNovos
+                            ],
+                            'invalidos' => [
+                                $retornos
+                            ], 'acao' => [
+                                'update'
+                            ]
+                        ]
+                    );
+                    $json = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                    $json = str::replace('[[', '[', $json);
+                    $json = str::replace(']]', ']', $json);
+                    $json = str::replace('[{', '{', $json);
+                    $json = str::replace('}]', '}', $json);
+                    #dd($json);
+                    DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+                    #dd("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', '$userId', NOW(), NOW());");
+
+                    #sleep(3);
+
+                    ######## End Log #######
+                #}
+
+                } catch (Exception $e) {}
+
+
+
+
             }
 
             # Atualiza a quantidade de linhas importadas no monitoramento
             # No futuro mostrar quantas foram atualizadas e quantos registros são novos
 
-            DB::update("update teste set coluna_4 = $i where id = $id");
+            DB::update("update teste set coluna_4 = $linhasImportadas where id = $id");
+            $linhasImportadas++;
             $i++;
 
-            }
+            #sleep(4);
 
-            try {
-            ######## Start Log #######
 
-            $dadosNovos = DB::select("select $colunasSelect from \"$tabelaSelecionada\" $where");
-            #dd([$dadosNovos, $dadosAntigos]);
-            if($dadosNovos != $dadosAntigos && !empty($dadosNovos) && !empty($dadosAntigos)) {
-            array_push($json,
-                [
-                    'old'=>[
-                        $dadosAntigos
-                    ],
-                    'new'=>[
-                        $dadosNovos
-                    ],
-                    'invalidos' => [
-                        $retornos
-                    ], 'acao' => [
-                        'update'
-                    ]
-                ]
-            );
-            $json = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            $json = str::replace('[[', '[', $json);
-            $json = str::replace(']]', ']', $json);
-            $json = str::replace('[{', '{', $json);
-            $json = str::replace('}]', '}', $json);
-            #dd($json);
-            DB::insert("INSERT INTO public.modificacoes (nome_tabela, historico, user_id, created_at, updated_at) VALUES('$tabelaSelecionada', '$json', ".Auth::user()->id.", NOW(), NOW());");
-
-            ######## End Log #######
         }
-
-        } catch (Exception $e) {}
-
 
         #$qsCompara = array_unique($qsCompara);
         #dd($arrayCompara);
@@ -548,10 +584,15 @@ class Import extends Component
         } catch (Exception $e) {
         }
 
+        unset($worksheet);
+        unset($i);
+
+        #return true;
+
 
         dd('Ok');
 
-*/
+#*/
         ####### Fim
 
 
