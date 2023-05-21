@@ -20,7 +20,7 @@ class Login extends Component
         if(auth()->user()){
             redirect('/relatorios');
         }
-        $this->fill(['email' => 'admin@softui.com', 'password' => 'secret']);
+        $this->fill(['email' => '', 'password' => '']);
     }
 
     public function login() {

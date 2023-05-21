@@ -181,6 +181,8 @@ class ImportJob implements ShouldQueue
         $arrayInsertFinal = $arrayTempTroca;
         unset($arrayTempTroca);
 
+        $linhasImportadas = 1;
+
         foreach($arrayInsertFinal as $finais) {
 
             unset($dadosAntigos);
@@ -251,6 +253,7 @@ class ImportJob implements ShouldQueue
                 ################################################################################################################
 
                 $colunasName = $colunasName.', '."\"$colunasTemp\"";
+                $valueTemp = str_replace("'", "", $valueTemp);
                 $values = $values.', '."'$valueTemp'";
 
                 $colunasSelect = substr($colunasName, 2, strlen($colunasName));
@@ -347,8 +350,11 @@ class ImportJob implements ShouldQueue
             # Atualiza a quantidade de linhas importadas no monitoramento
             # No futuro mostrar quantas foram atualizadas e quantos registros são novos
 
-            DB::update("update teste set coluna_4 = $i where id = $id");
+            DB::update("update teste set coluna_4 = $linhasImportadas where id = $id");
+            $linhasImportadas++;
             $i++;
+
+            sleep(3);
 
             }
 
