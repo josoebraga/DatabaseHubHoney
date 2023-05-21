@@ -382,7 +382,8 @@ class Import extends Component
                         array_push($retornos, [$colunasTemp => $retornoTemp]);
                     }
                 } else if(strpos(strtolower('_'.$colunasTemp), strtolower('CEP')) > 0) {
-                    if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $colunasTemp)){
+                    #dd('CEP');
+                    if(!preg_match('/^[0-9]{5,5}([- ]?[0-9]{3,3})?$/', $valueTemp)){
                         $retornoTemp = 'inválido';
                        } else {
                             $valueTemp = preg_replace('/[^0-9]/', '', trim($valueTemp));
