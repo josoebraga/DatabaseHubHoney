@@ -1,5 +1,9 @@
 <div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <div class="row">
         <div class="col-12">
         <div class="card mb-4">
@@ -97,7 +101,7 @@
 
                           <td class="align-middle text-center">
                             <div class="d-flex align-items-center justify-content-center">
-                              <span class="me-2 text-xs font-weight-bold">{{($contagem/$this->qtdTotalDeRegistrosTabela)*100}}%</span>
+                              <span class="me-2 text-xs font-weight-bold">@if($this->qtdTotalDeRegistrosTabela) {{($contagem/$this->qtdTotalDeRegistrosTabela)*100}}% @endif</span>
                               <div>
                                 <div class="progress">
                                   <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="{{$contagem}}" aria-valuemin="0" aria-valuemax="{{$this->qtdTotalDeRegistrosTabela}}" style="width: 15%;"></div>
@@ -112,6 +116,9 @@
 
                         @endforelse
 
+                        @endif
+
+                        @if($this->qtdTotalDeRegistrosTabela)
                         <tr>
                             <td class="align-middle text-center">
                                 <p class="text-sm font-weight-bold mb-0">Total de Registros</p>
@@ -120,7 +127,6 @@
                                 <p class="text-sm font-weight-bold mb-0">{{$this->qtdTotalDeRegistrosTabela}}</p>
                             </td>
                         </tr>
-
                         @endif
 
 
@@ -133,12 +139,81 @@
             </div>
           </div>
 
-          <button wire:click="export" wire:loading.attr="disabled">Exportar Dados</button>
+        <div class="row">
+            <div class="col-12">
+              <div class="card mb-4">
+                <div class="card-header pb-0">
+                  <h6>Ações do Mailing:</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                  <div class="table-responsive p-0">
+
+                    @if($this->qtdTotalDeRegistrosTabela)
+                    <div class="card-body pt-4 p-3">
+                        <div class="row">
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
+                                    <button type="submit" wire:click.prevent="export" class="btn btn-outline-primary btn-sm mb-0" wire:loading.attr="disabled">Exportar Dados</button>
+                                </div>
+                              </div>
+                           </div>
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
+                                    <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-toggle="modal" data-target="#myModal">
+                                        Excluir Dados
+                                    </button>
 
 
+                                </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     @endif
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+  <!-- The Modal -->
+  <div class="modal fade" id="myModal" wire:ignore.self>
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Atenção!</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          Tem certeza de que desa excluir? Após clicar em sim, todos os dados serão perdidor. Continuar?
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" wire:click.prevent="delete" data-dismiss="modal">Sim</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
         </div>
     </div>
-
 </div>
+
 

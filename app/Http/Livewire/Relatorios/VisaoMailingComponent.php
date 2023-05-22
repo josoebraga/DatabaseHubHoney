@@ -27,6 +27,7 @@ class VisaoMailingComponent extends Component
     public array $dataset = [];
     public array $labels = [];
     public $qtdTotalDeRegistrosTabela;
+    public $showConfirmation = false;
 
 
     protected $listeners = [
@@ -74,6 +75,32 @@ class VisaoMailingComponent extends Component
         }, $resultado);
         $this->total = array_sum($this->contagens);
 
+    }
+
+    public function delete()
+    {
+
+        $table = $this->tabelaSelecionada;
+        $carbon = Carbon::parse($this->data);
+        $dataFormatada = $carbon->format('Y-m-d');
+
+        // Obter todas as colunas da tabela selecionada
+        $columns = Schema::getColumnListing($table);
+
+        // Remover as colunas "created_at" e "updated_at" da lista de colunas
+        $columns = array_diff($columns, ['created_at', 'updated_at']);
+
+        $data = DB::table('public.modificacoes')
+                    ->whereRaw("nome_tabela = '$this->tabelaSelecionada'")
+                    ->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")
+                    ->delete();
+
+        $data = DB::table( $this->tabelaSelecionada)
+                    ->select($columns)
+                    ->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")
+                    ->delete();
+
+                    $this->mount();
     }
 
     public function export()
