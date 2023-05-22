@@ -43,18 +43,19 @@
                    </div>
                 </div>
              </div>
-
+            @if(!empty($this->tabelaSelecionada) && !empty($this->data))
              <div class="card-body pt-4 p-3">
                 <div class="row">
                    <div class="col-md-6">
                       <div class="form-group">
                          <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
-                            <button type="submit" wire:click.prevent="carregar" class="btn btn-outline-primary btn-sm mb-0">Confirmar</button>
+                            <button type="submit" wire:click.prevent="carregar" class="btn btn-outline-primary btn-sm mb-0">Atualizar</button>
                         </div>
                       </div>
                    </div>
                 </div>
              </div>
+            @endif
 
 
         </div>
