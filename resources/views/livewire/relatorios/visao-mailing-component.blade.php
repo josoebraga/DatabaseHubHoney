@@ -102,7 +102,7 @@
 
                           <td class="align-middle text-center">
                             <div class="d-flex align-items-center justify-content-center">
-                              <span class="me-2 text-xs font-weight-bold">@if($this->qtdTotalDeRegistrosTabela) {{($contagem/$this->qtdTotalDeRegistrosTabela)*100}}% @endif</span>
+                              <span class="me-2 text-xs font-weight-bold">@if($this->qtdTotalDeRegistrosTabela) {{number_format(($contagem / $this->qtdTotalDeRegistrosTabela) * 100, 2)}}% @endif</span>
                               <div>
                                 <div class="progress">
                                   <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="{{$contagem}}" aria-valuemin="0" aria-valuemax="{{$this->qtdTotalDeRegistrosTabela}}" style="width: 15%;"></div>
