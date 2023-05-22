@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 
 use App\Models\Modificacoes;
 use App\Models\Tabelas;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -100,6 +101,11 @@ class VisaoMailingComponent extends Component
                     ->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")
                     ->delete();
 
+                    try {
+                        DB::statement("REFRESH MATERIALIZED VIEW public.view_$table;");
+                    } catch (Exception $e) {
+                    }
+
                     $this->mount();
     }
 
@@ -109,13 +115,28 @@ class VisaoMailingComponent extends Component
             $carbon = Carbon::parse($this->data);
             $dataFormatada = $carbon->format('Y-m-d');
 
+            try {
+                DB::statement("DROP MATERIALIZED VIEW public.$table");
+            } catch (Exception $e) {
+            }
+            try {
+                DB::statement("CREATE MATERIALIZED VIEW public.view_$table AS SELECT * FROM public.$table;");
+            } catch (Exception $e) {
+            }
+            try {
+                DB::statement("REFRESH MATERIALIZED VIEW public.view_$table;");
+            } catch (Exception $e) {
+            }
+
+            $view = "view_$table";
+
             // Obter todas as colunas da tabela selecionada
             $columns = Schema::getColumnListing($table);
 
             // Remover as colunas "created_at" e "updated_at" da lista de colunas
             $columns = array_diff($columns, ['created_at', 'updated_at']);
 
-            $data = DB::table($table)->select($columns)->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->get();
+            $data = DB::table($view)->select($columns)->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->get();
 
             $response = new StreamedResponse(function () use ($data) {
 

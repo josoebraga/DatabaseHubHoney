@@ -64,7 +64,7 @@
             <div class="col-12">
               <div class="card mb-4">
                 <div class="card-header pb-0">
-                  <h6>Relatório do Mailing:</h6>
+                  <h6>Relatório de Inválidos:</h6>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
                   <div class="table-responsive p-0">
@@ -119,12 +119,36 @@
 
                         @endif
 
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <div class="row">
+            <div class="col-12">
+              <div class="card mb-4">
+                <div class="card-header pb-0">
+                  <h6>Total Geral:</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                  <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                      <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 align-middle text-center">Quantidade Total de Registros</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
                         @if($this->qtdTotalDeRegistrosTabela)
                         <tr>
                             <td class="align-middle text-center">
-                                <p class="text-sm font-weight-bold mb-0">Total de Registros</p>
-                            </td>
-                            <td class="align-middle text-center" colspan="2">
                                 <p class="text-sm font-weight-bold mb-0">{{$this->qtdTotalDeRegistrosTabela}}</p>
                             </td>
                         </tr>
@@ -159,17 +183,17 @@
                                 </div>
                               </div>
                            </div>
+                           @if(Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 2)
                            <div class="col-md-6">
                               <div class="form-group">
                                  <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
                                     <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-toggle="modal" data-target="#myModal">
                                         Excluir Dados
                                     </button>
-
-
                                 </div>
                               </div>
                            </div>
+                           @endif
                         </div>
                      </div>
                      @endif
