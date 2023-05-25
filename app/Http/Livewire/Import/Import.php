@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use ZipArchive;
+use Illuminate\Support\Facades\File;
 
 # https://stackoverflow.com/questions/46141652/running-laravel-queuework-on-a-shared-hosting
 # https://talltips.novate.co.uk/laravel/using-queues-on-shared-hosting-with-laravel
@@ -187,17 +189,18 @@ class Import extends Component
     public function save()
     {
 
-        $this->validate([
+        /*$this->validate([
             #'arquivo' => 'mimes:xls,txt,csv,xlsx|max:12288', // 1MB Max
-            'arquivo' => 'mimes:xls,txt,csv,xlsx', // 1MB Max
-        ]);
+            'arquivo' => 'mimes:xls,txt,csv,xlsx,zip', // 1MB Max
+        ]);*/
 
         #dd(Auth::user()->id);
 
         $teste = Teste::create([
             'coluna_1' => 'Teste: Coluna 1'
         ]);
-        $this->arquivo->storeAs("public/arquivos/$teste->id/", "$teste->id.csv");
+        $this->arquivo->storeAs("public/arquivos/$teste->id/", "$teste->id.zip");
+
         $teste = Teste::find($teste->id);
         $teste->coluna_1 = "$teste->id.csv";
         $teste->coluna_2 = "csv";

@@ -15,6 +15,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
+use ZipArchive;
+use Illuminate\Support\Facades\File;
+
 use App\Models\Teste;
 #use App\Models\Tabelas;
 use App\Models\NaoPerturbe;
@@ -76,6 +79,33 @@ class ImportJob implements ShouldQueue
         $colunaBaseComparacaoUpdate = $importador->coluna_8;
 
         # Carrega o arquivo
+
+        $zipFile = storage_path("app/public/arquivos/$id/$id.zip");
+        $extractTo = storage_path("app/public/arquivos/$id/");
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipFile) === true) {
+            $zip->extractTo($extractTo);
+            $zip->close();
+        }
+
+        $directory = storage_path("app/public/arquivos/$id/");
+
+        // Obtém todos os arquivos CSV no diretório
+        $files = File::glob("$directory/*.csv");
+
+        foreach ($files as $file) {
+            // Obtém o caminho completo do arquivo
+            $filePath = $directory . '/' . basename($file);
+
+            // Define o novo nome do arquivo
+            $newName = $directory . "/$id.csv";
+
+            // Renomeia o arquivo
+            File::move($filePath, $newName);
+        }
+
+
 
         $reader = new ReadCsv();
         $reader->setInputEncoding('CP1252');
