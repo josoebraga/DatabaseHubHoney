@@ -17,7 +17,7 @@ class Tabelas extends Model
             return DB::select("
                 select table_name
                 from information_schema.tables
-                where table_catalog = 'honey' and
+                where lower(table_catalog) = 'honey' and
                 table_schema = 'public' and
                 table_type = 'BASE TABLE' and
                 table_name not in (
