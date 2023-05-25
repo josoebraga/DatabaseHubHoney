@@ -91,8 +91,8 @@ class ImportJob implements ShouldQueue
 
         $directory = storage_path("app/public/arquivos/$id/");
 
-        // Obtém todos os arquivos CSV no diretório
-        $files = File::glob("$directory/*.csv");
+        // Obtém todos os arquivos CSV e TXT no diretório
+        $files = File::glob("$directory/*.{csv,txt}", GLOB_BRACE);
 
         foreach ($files as $file) {
             // Obtém o caminho completo do arquivo

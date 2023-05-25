@@ -189,17 +189,31 @@ class Import extends Component
     public function save()
     {
 
-        /*$this->validate([
+        $this->validate([
             #'arquivo' => 'mimes:xls,txt,csv,xlsx|max:12288', // 1MB Max
-            'arquivo' => 'mimes:xls,txt,csv,xlsx,zip', // 1MB Max
-        ]);*/
+            'arquivo' => 'mimes:xls,txt,csv,zip', // 1MB Max
+        ]);
 
         #dd(Auth::user()->id);
 
         $teste = Teste::create([
             'coluna_1' => 'Teste: Coluna 1'
         ]);
-        $this->arquivo->storeAs("public/arquivos/$teste->id/", "$teste->id.zip");
+        $testeId = $teste->id;
+
+        $directory = "public/arquivos/$testeId/";
+        $filename = "$testeId.zip";
+        $extension = File::extension($filename);
+
+        $this->arquivo->storeAs($directory, $filename);
+
+        // Obtém a extensão do arquivo original
+        $extension = $this->arquivo->getClientOriginalExtension();
+
+        // Renomeia o arquivo com a extensão dinamicamente
+        $newFilename = "$testeId.$extension";
+        $newFilePath = "$directory/$newFilename";
+        Storage::move("$directory/$filename", $newFilePath);
 
         $teste = Teste::find($teste->id);
         $teste->coluna_1 = "$teste->id.csv";
