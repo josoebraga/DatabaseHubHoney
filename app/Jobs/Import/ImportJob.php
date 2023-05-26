@@ -36,7 +36,7 @@ class ImportJob implements ShouldQueue
      */
     public function __construct()
     {
-        //
+        //php artisan queue:listen --timeout=86400
     }
 
     /**

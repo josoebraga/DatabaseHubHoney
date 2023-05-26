@@ -36,6 +36,7 @@ return [
 
         'database' => [
             'driver' => 'database',
+            'timeout' => 86400,
             'table' => 'jobs',
             'queue' => 'default',
             'retry_after' => 90,
@@ -64,6 +65,7 @@ return [
 
         'redis' => [
             'driver' => 'redis',
+            'timeout' => 86400,
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
             'retry_after' => 90,
