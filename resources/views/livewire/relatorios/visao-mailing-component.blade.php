@@ -187,6 +187,30 @@
                            <div class="col-md-6">
                               <div class="form-group">
                                  <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
+                                    <button type="submit" wire:click.prevent="restaurar" class="btn btn-outline-primary btn-sm mb-0" wire:loading.attr="disabled">Restaurar Dados</button>
+                                </div>
+
+
+                                @if($mensagem)
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Sucesso!</strong> Sua operação foi realizada com êxito!
+                                    <button type="button" class="close" data-dismiss="alert" wire:click.prevent="limparMensagem" aria-label="Fechar">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                @endif
+
+
+
+                              </div>
+                           </div>
+                           @endif
+                        </div>
+                        <div class="row">
+                           @if(Auth::user()->user_type_id == 1 || Auth::user()->user_type_id == 2)
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <div class="@error('user.user_type_id')border border-danger rounded-3 @enderror">
                                     <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-toggle="modal" data-target="#myModal">
                                         Excluir Dados
                                     </button>

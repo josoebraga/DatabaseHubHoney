@@ -29,7 +29,7 @@ class VisaoMailingComponent extends Component
     public array $labels = [];
     public $qtdTotalDeRegistrosTabela;
     public $showConfirmation = false;
-
+    public $mensagem = null;
 
     protected $listeners = [
         'carregar' => 'carregar',
@@ -78,6 +78,61 @@ class VisaoMailingComponent extends Component
 
     }
 
+    public function restaurar()
+    {
+        $carbon = Carbon::parse($this->data);
+        $dataFormatada = $carbon->format('Y-m-d');
+        $chave = null;
+        $update = [];
+        #$dados = DB::table($this->tabelaSelecionada)->whereRaw("TO_CHAR(created_at, 'YYYY-MM-DD') = ?", [$dataFormatada])->get();
+        $dados = DB::table('teste')->where('coluna_5', '=', $this->tabelaSelecionada)->whereRaw("TO_CHAR(created_at, 'YYYY-MM-DD') = ?", [$dataFormatada])->select('coluna_8 as chave')->orderByRaw('created_at desc')->limit(1)->get();
+        foreach ($dados as $key => $value) {
+            $chave = $value->chave;
+        }
+
+        #############################################################
+
+        $modificacoes = Modificacoes::leftJoin('users', 'users.id', '=', 'modificacoes.user_id')->where('nome_tabela', '=', "$this->tabelaSelecionada")->whereRaw("to_char(modificacoes.created_at, 'YYYY-MM-DD') = '$dataFormatada'")->select('modificacoes.*', 'users.name')->orderBy('id', 'asc')->get();
+
+        #dd($this->historicos);
+
+        foreach($modificacoes as $key => $historico) {
+            #dd(json_decode($historico->historico));
+            #$json = json_decode($historico->historico, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $json = json_decode($historico->historico);
+            #dd($json->old);
+            $chaveAtual = null;
+            if (property_exists($json, 'old')) {
+                #dd($json->old);
+                foreach ($json->old as $key => $value) {
+                    if($key == $chave) {
+                        $chaveAtual = $value;
+                    }
+                    $update[$key] = $value;
+                } #dd($update);
+
+                $now = Carbon::now();
+                $value = $now->format('Y-m-d H:i:s');
+                $update['updated_at'] = $value;
+
+                DB::table($this->tabelaSelecionada)
+                ->where("$chave", '=', "$chaveAtual")
+                ->update($update);
+            }
+        }
+
+        #############################################################
+
+        $this->mount('Ok');
+
+    }
+
+    public function limparMensagem()
+    {
+        $this->mensagem = null;
+        #$this->mount(null);
+    }
+
     public function delete()
     {
 
@@ -106,7 +161,7 @@ class VisaoMailingComponent extends Component
                     } catch (Exception $e) {
                     }
 
-                    $this->mount();
+                    $this->mount(null);
     }
 
     public function export()
@@ -136,7 +191,7 @@ class VisaoMailingComponent extends Component
             // Remover as colunas "created_at" e "updated_at" da lista de colunas
             $columns = array_diff($columns, ['created_at', 'updated_at']);
 
-            $data = DB::table($view)->select($columns)->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->get();
+            $data = DB::table($view)->select($columns)->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->orderByRaw('1 asc')->get();
 
             $response = new StreamedResponse(function () use ($data) {
 
@@ -165,10 +220,13 @@ class VisaoMailingComponent extends Component
         return $response;
     }
 
-    public function mount()
+    public function mount($mensagem = null)
     {
         if(!empty($this->tabelaSelecionada) && !empty($this->data)) {
             $this->carregar();
+            if($mensagem) {
+                $this->mensagem = $mensagem;
+            }
         }
     }
 
@@ -176,7 +234,7 @@ class VisaoMailingComponent extends Component
     {
 
         $this->tabelas = Tabelas::tabelas();
-        $this->mount();
+        $this->mount(null);
         return view('livewire.relatorios.visao-mailing-component');
     }
 }
