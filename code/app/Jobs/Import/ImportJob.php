@@ -15,7 +15,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
-use ZipArchive;
+use League\Flysystem\ZipArchive;
+use League\Flysystem\FilesystemException;
+
 use Illuminate\Support\Facades\File;
 
 use App\Models\Teste;

@@ -10,6 +10,7 @@
         "guzzlehttp/guzzle": "^7.4",
         "laravel/framework": "^9.0",
         "laravel/tinker": "^2.6",
+        "league/flysystem-ziparchive": "*",
         "livewire/livewire": "^2.8",
         "phpoffice/phpspreadsheet": "^1.28"
     },

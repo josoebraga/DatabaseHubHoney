@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17ac981d40ec1ffc7c1d72af6b3ed430",
+    "content-hash": "587b6c22aa726e3647690882ee592073",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1774,6 +1774,66 @@
                 }
             ],
             "time": "2023-04-11T18:11:47+00:00"
+        },
+        {
+            "name": "league/flysystem-ziparchive",
+            "version": "3.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-ziparchive.git",
+                "reference": "cb51f956c0e6a1ec51e850a292b55662518f040b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-ziparchive/zipball/cb51f956c0e6a1ec51e850a292b55662518f040b",
+                "reference": "cb51f956c0e6a1ec51e850a292b55662518f040b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "league/flysystem": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\ZipArchive\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "ZIP filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "zip"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/flysystem-ziparchive/issues",
+                "source": "https://github.com/thephpleague/flysystem-ziparchive/tree/3.15.0"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-05-02T20:02:14+00:00"
         },
         {
             "name": "league/mime-type-detection",
