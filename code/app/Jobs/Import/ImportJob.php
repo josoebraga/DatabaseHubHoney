@@ -25,7 +25,7 @@ use App\Models\Teste;
 use App\Models\NaoPerturbe;
 
 use \PhpOffice\PhpSpreadsheet\Reader\Csv as ReadCsv;
-
+use ZipArchive as GlobalZipArchive;
 
 class ImportJob implements ShouldQueue
 {
@@ -85,7 +85,7 @@ class ImportJob implements ShouldQueue
         $zipFile = storage_path("app/public/arquivos/$id/$id.zip");
         $extractTo = storage_path("app/public/arquivos/$id/");
 
-        $zip = new ZipArchive();
+        $zip = new GlobalZipArchive();
         if ($zip->open($zipFile) === true) {
             $zip->extractTo($extractTo);
             $zip->close();
