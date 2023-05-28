@@ -1,0 +1,34 @@
+version: "3.7"
+#http://127.0.0.1:7877/
+services:
+    nginx-databasehubhoney:
+        container_name: nginx-databasehubhoney
+        build:
+            context: ./
+            dockerfile: ./builds/nginx/Dockerfile.local
+        ports:
+            - "7877:80"
+        working_dir: /var/www/databasehubhoney.local
+        volumes:
+            - ./code:/var/www/databasehubhoney.local
+
+    php-databasehubhoney:
+        container_name: php-databasehubhoney
+        build:
+            context: ./
+            dockerfile: ./builds/php/Dockerfile.local
+        working_dir: /var/www/databasehubhoney.local
+        volumes:
+            - ./code:/var/www/databasehubhoney.local
+
+    supervisor:
+        build:
+            context: ./
+            dockerfile: ./builds/supervisord/Dockerfile.local
+        ports:
+           - "5431:5431"
+        working_dir: /var/www/databasehubhoney.local
+        restart: unless-stopped
+        volumes:
+            - ./code:/var/www/databasehubhoney.local
+

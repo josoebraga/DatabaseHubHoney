@@ -1,0 +1,8 @@
+FROM nginx:latest
+
+LABEL maintainer="Josoé Schmidt Braga"
+
+RUN apt-get update -y
+
+COPY ./builds/nginx/databasehubhoney.local.conf /etc/nginx/conf.d/databasehubhoney.local.conf
+
