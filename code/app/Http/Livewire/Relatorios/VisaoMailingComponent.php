@@ -189,7 +189,7 @@ class VisaoMailingComponent extends Component
             $columns = Schema::getColumnListing($table);
 
             // Remover as colunas "created_at" e "updated_at" da lista de colunas
-            $columns = array_diff($columns, ['created_at', 'updated_at']);
+            $columns = array_diff($columns, ['created_at', 'updated_at', 'id']);
 
             $data = DB::table($view)->select($columns)->whereRaw("to_char(created_at, 'YYYY-MM-DD') = '$dataFormatada'")->orderByRaw('1 asc')->get();
 
@@ -215,7 +215,7 @@ class VisaoMailingComponent extends Component
         });
 
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename='.$this->tabelaSelecionada);
+        $response->headers->set('Content-Disposition', 'attachment; filename='.$this->tabelaSelecionada.'_resultado');
 
         return $response;
     }
