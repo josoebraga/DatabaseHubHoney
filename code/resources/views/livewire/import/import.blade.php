@@ -9,6 +9,18 @@
         </div>
         <div class="card-body px-0 pt-0 pb-2">
           <div class="table-responsive p-0">
+
+            @if($tabelaSelecionada)
+            <div class="container">
+              <br>
+              <div class="row">
+                <label for="icone">Download do Modelo de Layout:</label>                
+                <a id="icone" type="" class="cursor-pointer"  wire:click.prevent="export"><img src="../assets/img/file-formats/csv.png" class="avatar avatar-sm rounded-circle me-2"></a>
+              </div>
+              <br>
+            </div>
+            @endif  
+
     <div>
         <form>
             {{csrf_field()}}

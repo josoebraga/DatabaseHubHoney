@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+#use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 use Illuminate\Support\Facades\File;
 
@@ -185,6 +188,42 @@ class Import extends Component
         }
 
     }
+
+    ############################################################################
+
+    public function export()
+    {
+            $table = str_replace('csv', '', $this->tabelaSelecionada);
+
+
+            // Obter todas as colunas da tabela selecionada
+            $columns = Schema::getColumnListing($table);
+
+            // Remover as colunas "created_at" e "updated_at" da lista de colunas
+            $columns = array_diff($columns, ['id', 'created_at', 'updated_at']);
+
+            $response = new StreamedResponse(function () use ($columns) {
+
+            $handle = fopen('php://output', 'w');
+
+            // Defina o delimitador como ";"
+            $delimiter = ';';
+
+
+            // Escreva o cabeçalho do arquivo CSV com o delimitador personalizado
+            fputcsv($handle, $columns, $delimiter);
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename='.'Layout_'.$table);
+
+        return $response;
+    }
+
+
+    ############################################################################
 
     public function save()
     {

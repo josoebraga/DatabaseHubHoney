@@ -215,7 +215,7 @@ class VisaoMailingComponent extends Component
         });
 
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', "attachment; filename=\"$this->tabelaSelecionada.csv\"");
+        $response->headers->set('Content-Disposition', 'attachment; filename='.$this->tabelaSelecionada);
 
         return $response;
     }
