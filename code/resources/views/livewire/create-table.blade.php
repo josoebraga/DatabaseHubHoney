@@ -46,17 +46,18 @@
                                             </td>
                                             <td>
                                                 <button wire:click="removeColumn({{ $index }})"
-                                                    class="btn btn-sm btn-danger">Remover</button>
+                                                    class="btn bg-gradient-danger btn-sm mb-0">Remover</button>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
 
-                            <button wire:click="addColumn" class="btn btn-sm btn-primary">Adicionar Coluna</button>
+                            <button wire:click="addColumn" class="btn bg-gradient-primary btn-sm mb-0">Adicionar Coluna</button>
                         </div>
-
-                        <button wire:click="createTable" class="btn btn-primary">Criar Tabela</button>
+                        <div class="mb-3 text-center">
+                            <button wire:click="createTable" class="btn btn-primary">Criar Tabela</button>
+                        </div>
                     </div>
                 </div>
             </div>
