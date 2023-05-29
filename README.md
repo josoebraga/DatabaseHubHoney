@@ -8,16 +8,21 @@
 
 *Frontend version*: Soft UI Dashboard v1.0.0. More info at https://www.creative-tim.com/product/soft-ui-dashboard-laravel-livewire/?ref=sudl-readme 
 
-[<img src="https://s3.amazonaws.com/creativetim_bucket/products/492/original/soft-ui-dashboard-laravel-livewire.jpg" width="100%" />](https://www.creative-tim.com/live/soft-ui-dashboard-laravel-livewire)
+## Pré-requisitos
 
-## Installation
+1. Git
+2. Docker
+3. WSL2 (Apenas para usuários do Windows)
+4. PHP ^8.1
+5. Laravel ^8
 
-1. Unzip the downloaded archive
-2. Copy and paste **soft-ui-dashboard-laravel-master** folder in your **projects** folder. Rename the folder to your project's name
-3. In your terminal run `composer install`
-4. Copy `.env.example` to `.env` and updated the configurations (mainly the database configuration)
-5. In your terminal run `php artisan key:generate`
-6. Run `php artisan migrate --seed` to create the database tables and seed the roles and users tables
-7. Run `php artisan storage:link` to create the storage symlink (if you are using **Vagrant** with **Homestead** for development, remember to ssh into your virtual machine and run the command from there).
+## Instalação
 
-php artisan migrate:refresh --seed
+1. Copie o projeto para dentro de uma pasta do WSL2, em caso de estar usando o Windows, ou em qualquer pasta do Linux, e execute: git clone https://github.com/josoebraga/DatabaseHubHoney.git
+2. Entre na pasta code e execute o camando: cp .env.example .env
+3. Entre na pasta code e execute o camando: php artisan key:generate
+4. Configure a conexão com o banco de dados PostgreSQL no arquivo .env
+5. Faça duas cópias do .env chamadas de .env.dev e .env.prd 
+6. Na pasta raiz execute: docker-compose build
+7. Na pasta raiz execute: docker-compose up -d
+8. O projeto executará localmente em um endereço similar a http://127.0.0.1:7877/ 
