@@ -43,7 +43,7 @@ class VisaoMailingComponent extends Component
         $colunasTmp = [];
         $this->historicos = Modificacoes::leftJoin('users', 'users.id', '=', 'modificacoes.user_id')->where('nome_tabela', '=', "$this->tabelaSelecionada")->whereRaw("to_char(modificacoes.created_at, 'YYYY-MM-DD') = '$dataFormatada'")->select('modificacoes.*', 'users.name')->orderBy('id', 'asc')->paginate(100);
 
-        $registrosTabela = DB::select("select count(*) qtd from $this->tabelaSelecionada where TO_CHAR(created_at, 'YYYY-MM-DD') = '$dataFormatada'");
+        $registrosTabela = DB::select("select count(*) qtd from \"$this->tabelaSelecionada\" where TO_CHAR(created_at, 'YYYY-MM-DD') = '$dataFormatada'");
         foreach($registrosTabela as $qtdReg) {
             $this->qtdTotalDeRegistrosTabela = $qtdReg->qtd;
         }
@@ -212,7 +212,7 @@ class VisaoMailingComponent extends Component
             }
 
             fclose($handle);
-        });
+            });
 
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', 'attachment; filename='.$this->tabelaSelecionada.'_resultado');

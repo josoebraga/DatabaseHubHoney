@@ -24,12 +24,12 @@ class CreateTable extends Component
 
     public function createTable()
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
+        Schema::create(strtolower($this->tableName), function (Blueprint $table) {
             $table->id(); // Adiciona uma coluna de chave primária com o nome "id"
             $table->timestamps(); // Adiciona colunas "created_at" e "updated_at"
     
             foreach ($this->columns as $column) {
-                $table->{$column['type']}($column['name']);
+                $table->{$column['type']}(strtolower($column['name']));
             }
         });
     

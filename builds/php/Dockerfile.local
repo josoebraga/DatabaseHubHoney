@@ -46,9 +46,10 @@ RUN chmod 777 ./public -R
 RUN chmod 777 ./storage -R
 RUN chmod 777 ./storage/logs/ -R
 #RUN php artisan cache:clear
-#RUN mkdir ./storage/app/public/arquivos
+RUN mkdir -p ./storage/app/public/arquivos
 
 RUN chmod 777 ./public -R
+RUN chmod 777 ./storage -R
 
 # RUN chmod -R 777 ./framework/views
 # RUN chmod -R 777 ./framework/sessions

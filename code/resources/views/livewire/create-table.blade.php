@@ -40,6 +40,7 @@
                                                     <option value="text">Text</option>
                                                     <option value="integer">Integer</option>
                                                     <option value="bigInteger">BigInteger</option>
+                                                    <option value="date">Data</option>
                                                     <option value="boolean">Boolean</option>
                                                     <!-- Adicione outros tipos de dados conforme necessário -->
                                                 </select>
